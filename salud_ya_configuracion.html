@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configuración – Salud Ya</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #C8D8EE;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+.app {
+  background: #f4f6f9;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: -apple-system, 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 769px) {
+  .app {
+    min-height: calc(100vh - 40px);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+  body { padding: 20px !important; }
+}
+@media (max-width: 768px) {
+  body { padding: 0 !important; }
+  .app { border-radius: 0 !important; }
+}
+
+.topbar { background: #fff; padding: 14px 18px 10px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid #e8eaed; }
+.back-btn { background: none; border: none; font-size: 20px; color: #444; cursor: pointer; display: flex; align-items: center; }
+.logo { display: flex; align-items: center; gap: 6px; font-size: 20px; font-weight: 700; }
+.logo svg { width: 30px; height: 30px; }
+.logo .salud { color: #1a5fb4; } .logo .ya { color: #26a269; }
+.notif-wrap { position: relative; }
+.notif-btn { background: none; border: none; font-size: 20px; color: #555; cursor: pointer; }
+.notif-badge { position: absolute; top: -4px; right: -4px; background: #e5a50a; color: #fff; font-size: 10px; font-weight: 700; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+.content { padding: 20px 16px 24px; }
+.page-title { font-size: 26px; font-weight: 700; color: #1a1a2e; }
+.page-sub { font-size: 13px; color: #6c757d; margin-top: 3px; margin-bottom: 20px; }
+
+.section-label { font-size: 15px; font-weight: 700; color: #1a1a2e; margin-bottom: 10px; margin-top: 20px; }
+.section-label:first-of-type { margin-top: 0; }
+
+.settings-group { background: #fff; border-radius: 14px; border: 0.5px solid #e8eaed; overflow: hidden; }
+.setting-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-bottom: 0.5px solid #f0f2f4; cursor: pointer; transition: background 0.15s; }
+.setting-row:last-child { border-bottom: none; }
+.setting-row:active { background: #f8f9fa; }
+.s-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
+.si-blue   { background: #e6f1fb; color: #1a5fb4; }
+.si-green  { background: #e1f5ee; color: #26a269; }
+.si-purple { background: #eeedfe; color: #7f77dd; }
+.si-amber  { background: #faeeda; color: #ba7517; }
+.si-teal   { background: #e1f5ee; color: #0f6e56; }
+.si-red    { background: #fcebeb; color: #e24b4a; }
+.s-text { flex: 1; }
+.s-title { font-size: 14px; font-weight: 600; color: #1a1a2e; }
+.s-sub { font-size: 12px; color: #6c757d; margin-top: 2px; }
+.s-right { display: flex; align-items: center; gap: 6px; }
+.s-value { font-size: 13px; font-weight: 600; color: #1a5fb4; }
+.s-value.muted { color: #6c757d; font-weight: 400; }
+.chevron { font-size: 15px; color: #c0c4cc; }
+
+.toggle { width: 44px; height: 25px; border-radius: 13px; background: #d1d5db; position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+.toggle.on { background: #26a269; }
+.toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 19px; height: 19px; border-radius: 50%; background: #fff; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+.toggle.on::after { left: 22px; }
+
+.security-banner { background: #f0fdf4; border: 0.5px solid #bbf7d0; border-radius: 14px; padding: 18px 16px; margin-top: 16px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; position: relative; overflow: hidden; }
+.banner-text { flex: 1; }
+.banner-title { font-size: 14px; font-weight: 700; color: #186b35; }
+.banner-sub { font-size: 12px; color: #3a8a57; margin-top: 5px; line-height: 1.5; }
+.shield-wrap { width: 62px; height: 62px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.shield-wrap svg { width: 58px; height: 58px; }
+.dot-pattern { position: absolute; right: 70px; top: 6px; font-size: 28px; color: #bbf7d0; letter-spacing: 6px; line-height: 1.2; pointer-events: none; user-select: none; opacity: 0.7; }
+
+.bottom-nav { background: #fff; border-top: 0.5px solid #e8eaed; display: flex; padding: 8px 0 10px; position: sticky; bottom: 0; left: 0; right: 0; width: 100%; z-index: 10; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 0; }
+.nav-icon { font-size: 22px; color: #aaa; }
+.nav-label { font-size: 10px; color: #aaa; font-weight: 500; }
+.nav-item.active .nav-icon { color: #1a5fb4; }
+.nav-item.active .nav-label { color: #1a5fb4; font-weight: 700; }
+</style>
+
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <button class="back-btn" aria-label="Volver" onclick="window.location.href='salud_ya_perfil.html'"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>
+    <div class="logo">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="19" fill="#e6f1fb" stroke="#b5d4f4" stroke-width="1"/>
+        <path d="M20 28c-6-4-10-8-10-12a6 6 0 0112 0 6 6 0 0112 0c0 4-4 8-10 12z" fill="#1a5fb4" opacity="0.12"/>
+        <path d="M20 28c-6-4-10-8-10-12a6 6 0 0112 0 6 6 0 0112 0c0 4-4 8-10 12z" fill="none" stroke="#1a5fb4" stroke-width="1.5"/>
+        <path d="M16 19h8M20 15v8" stroke="#26a269" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="salud">Salud</span><span class="ya"> Ya</span>
+    </div>
+    <div class="notif-wrap">
+      <button class="notif-btn" aria-label="Notificaciones"><i class="ti ti-bell" aria-hidden="true"></i></button>
+      <span class="notif-badge">3</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-title">Configuración</div>
+    <div class="page-sub">Personaliza tu experiencia en Salud Ya</div>
+
+    <!-- CUENTA -->
+    <div class="section-label">Cuenta</div>
+    <div class="settings-group">
+      <div class="setting-row">
+        <div class="s-icon si-blue"><i class="ti ti-user" aria-hidden="true"></i></div>
+        <div class="s-text">
+          <div class="s-title">Información de la cuenta</div>
+          <div class="s-sub">Actualiza tus datos personales</div>
+        </div>
+        <div class="s-right"><i class="ti ti-chevron-right chevron" aria-hidden="true"></i></div>
+      </div>
+      <div class="setting-row">
+        <div class="s-icon si-green"><i class="ti ti-shield-check" aria-hidden="true"></i></div>
+        <div class="s-text">
+          <div class="s-title">Seguridad y privacidad</div>
+          <div class="s-sub">Gestiona tu contraseña y privacidad</div>
+        </div>
+        <div class="s-right"><i class="ti ti-chevron-right chevron" aria-hidden="true"></i></div>
+      </div>
+      <div class="setting-row">
+        <div class="s-icon si-purple"><i class="ti ti-credit-card" aria-hidden="true"></i></div>
+        <div class="s-text">
+          <div class="s-title">Métodos de pago</div>
+          <div class="s-sub">Administra tus tarjetas y pagos</div>
+        </div>
+        <div class="s-right"><i class="ti ti-chevron-right chevron" aria-hidden="true"></i></div>
+      </div>
+    </div>
+
+    <!-- PREFERENCIAS -->
+    <div class="section-label">Preferencias</div>
+    <div class="settings-group">
+      <div class="setting-row">
+        <div class="s-icon si-blue"><i class="ti ti-bell" aria-hidden="true"></i></div>
+        <div class="s-text">
+          <div class="s-title">Notificaciones</div>
+          <div class="s-sub">Elige qué notificaciones quieres recibir</div>
+        </div>
+        <div class="s-right">
+          <span class="s-value">Activadas</span>
+          <i class="ti ti-chevron-right chevron" aria-hidden="true"></i>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="s-icon si-green"><i class="ti ti-world" aria-hidden="true"></i></div>
+        <div class="s-text">
+          <div class="s-title">Idioma</div>
+          <div class="s-sub">Selecciona tu idioma preferido</div>
+        </div>
+        <div class="s-right">
+          <span class="s-value muted">Español</span>
+          <i class="ti ti-chevron-right chevron" aria-hidden="true"></i>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="s-icon si-purple"><i class="ti ti-moon" aria-hidden="true"></i></div>
+        <div class="s-text">
+          <div class="s-title">Modo oscuro</div>
+          <div class="s-sub">Activa o desactiva el modo oscuro</div>
+        </div>
+        <div class="s-right">
+          <div class="toggle" id="darkToggle" onclick="this.classList.toggle('on')" role="switch" aria-label="Modo oscuro"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GENERAL -->
+    <div class="section-label">General</div>
+    <div class="settings-group">
+      <div class="setting-row">
+        <div class="s-icon si-amber"><i class="ti ti-help-circle" aria-hidden="true"></i></div>
+        <div class="s-text">
+          <div class="s-title">Ayuda y soporte</div>
+          <div class="s-sub">Obtén ayuda y contáctanos</div>
+        </div>
+        <div class="s-right"><i class="ti ti-chevron-right chevron" aria-hidden="true"></i></div>
+      </div>
+      <div class="setting-row">
+        <div class="s-icon si-teal"><i class="ti ti-info-circle" aria-hidden="true"></i></div>
+        <div class="s-text">
+          <div class="s-title">Acerca de Salud Ya</div>
+          <div class="s-sub">Versión de la app e información legal</div>
+        </div>
+        <div class="s-right"><i class="ti ti-chevron-right chevron" aria-hidden="true"></i></div>
+      </div>
+      <div class="setting-row" onclick="handleLogout()">
+        <div class="s-icon si-red"><i class="ti ti-logout" aria-hidden="true"></i></div>
+        <div class="s-text">
+          <div class="s-title" style="color: #e24b4a;">Cerrar sesión</div>
+          <div class="s-sub">Cierra tu sesión en este dispositivo</div>
+        </div>
+        <div class="s-right"><i class="ti ti-chevron-right chevron" aria-hidden="true"></i></div>
+      </div>
+    </div>
+
+    <!-- BANNER SEGURIDAD -->
+    <div class="security-banner">
+      <div class="banner-text">
+        <div style="font-size:22px;color:#26a269;margin-bottom:6px;"><i class="ti ti-lock" aria-hidden="true"></i></div>
+        <div class="banner-title">Tu información está protegida</div>
+        <div class="banner-sub">En Salud Ya cuidamos tu privacidad y<br>la seguridad de tus datos.</div>
+      </div>
+      <div class="shield-wrap">
+        <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M30 4L8 14v14c0 13 9.5 24.5 22 28 12.5-3.5 22-15 22-28V14L30 4z" fill="#26a269"/>
+          <path d="M20 30l7 7 13-13" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="dot-pattern" aria-hidden="true">· · ·<br>· · ·<br>· · ·</div>
+    </div>
+
+    <div style="height:8px;"></div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='saludya_app.html'">
+      <span class="nav-icon"><i class="ti ti-home" aria-hidden="true"></i></span>
+      <span class="nav-label">Inicio</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='salud_ya_medicos_screen.html'">
+      <span class="nav-icon"><i class="ti ti-users" aria-hidden="true"></i></span>
+      <span class="nav-label">Médicos</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='salud_ya_medicamentos_screen.html'">
+      <span class="nav-icon"><i class="ti ti-pill" aria-hidden="true"></i></span>
+      <span class="nav-label">Medicamentos</span>
+    </div>
+    <div class="nav-item active" onclick="window.location.href='salud_ya_perfil.html'">
+      <span class="nav-icon"><i class="ti ti-user-circle" aria-hidden="true"></i></span>
+      <span class="nav-label">Perfil</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+
+<script src="db.js"></script>
+<script>
+// Toggle dark mode persistence
+document.getElementById('darkToggle').addEventListener('click', function(){
+  if(typeof SaludYaDB !== 'undefined'){
+    const configs = SaludYaDB.getConfigs();
+    configs.darkMode = this.classList.contains('on');
+    SaludYaDB.saveConfigs(configs);
+  }
+});
+
+function handleLogout() {
+  if (typeof SaludYaDB !== 'undefined') {
+    SaludYaDB.logout();
+  } else {
+    window.location.href = 'salud_ya_welcome_screen.html';
+  }
+}
+</script>

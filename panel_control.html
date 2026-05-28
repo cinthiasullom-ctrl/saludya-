@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Panel de Control – Salud Ya</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --blue:        #3B82F6;
+  --blue-dark:   #1D4ED8;
+  --blue-light:  #EFF6FF;
+  --blue-mid:    #BFDBFE;
+  --teal:        #1a7a6b;
+  --teal-light:  #E8F8F4;
+  --green:       #22C55E;
+  --green-light: #DCFCE7;
+  --purple:      #8B5CF6;
+  --purple-light:#EDE9FE;
+  --orange:      #F97316;
+  --orange-light:#FFF7ED;
+  --red:         #EF4444;
+  --red-light:   #FEE2E2;
+  --yellow:      #F59E0B;
+  --text:        #111827;
+  --text-mid:    #4B5563;
+  --text-light:  #9CA3AF;
+  --border:      #E5E7EB;
+  --bg:          #F9FAFB;
+  --white:       #FFFFFF;
+}
+
+body {
+  background: #ffffff;
+  display:flex; align-items:center; justify-content:center;
+  min-height:100vh; font-family:'Nunito',sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+.app {
+  background: var(--bg);
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* SCROLL */
+.scroll-area {
+  flex: 1;
+  overflow-y:auto; overflow-x:hidden; scrollbar-width:none;
+  background:var(--white);
+  display: flex;
+  flex-direction: column;
+}
+
+.scroll-area::-webkit-scrollbar { display:none; }
+
+/* TOP NAV */
+.top-nav {
+  background:var(--white); padding:10px 20px 12px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:10;
+}
+.hamburger { display:flex; flex-direction:column; gap:4px; cursor:pointer; padding:4px; }
+.hamburger span { display:block; width:22px; height:2.5px; background:var(--text); border-radius:2px; }
+.nav-titles .nav-main { font-size:18px; font-weight:800; color:var(--text); }
+.nav-titles .nav-sub  { font-size:12px; color:var(--text-light); font-weight:500; }
+.notif-btn {
+  width:36px; height:36px; border-radius:50%; background:var(--bg);
+  border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center;
+  cursor:pointer; position:relative;
+}
+.notif-badge {
+  position:absolute; top:-3px; right:-3px; width:18px; height:18px;
+  background:var(--blue); border-radius:50%; font-size:10px; font-weight:800;
+  color:white; display:flex; align-items:center; justify-content:center;
+  border:2px solid white;
+}
+
+/* CONTENT */
+.content { padding:0 16px; background:var(--bg); }
+
+/* HERO BANNER */
+.hero-banner {
+  background:linear-gradient(130deg,#3B82F6 0%,#1D4ED8 60%,#1e40af 100%);
+  border-radius:18px; padding:18px 20px;
+  display:flex; align-items:center; justify-content:space-between;
+  margin:14px 0; position:relative; overflow:hidden;
+  min-height:100px;
+}
+.hero-banner::before {
+  content:''; position:absolute; top:-20px; right:60px;
+  width:120px; height:120px;
+  background:rgba(255,255,255,.08); border-radius:50%;
+}
+.hero-banner::after {
+  content:''; position:absolute; bottom:-30px; right:20px;
+  width:80px; height:80px;
+  background:rgba(255,255,255,.06); border-radius:50%;
+}
+.hero-left { z-index:1; }
+.hero-tag  { font-size:11px; color:rgba(255,255,255,.75); font-weight:600; margin-bottom:4px; }
+.hero-date { font-size:19px; font-weight:900; color:white; margin-bottom:6px; }
+.hero-status { display:flex; align-items:center; gap:6px; }
+.hero-dot  { width:8px; height:8px; border-radius:50%; background:#4ADE80; flex-shrink:0; }
+.hero-status-text { font-size:12px; color:rgba(255,255,255,.9); font-weight:600; }
+.hero-right { z-index:1; display:flex; gap:8px; align-items:flex-end; }
+.hero-shield {
+  width:52px; height:52px; border-radius:14px;
+  background:rgba(255,255,255,.18);
+  display:flex; align-items:center; justify-content:center;
+}
+.hero-chart { display:flex; align-items:flex-end; gap:4px; height:44px; }
+.bar {
+  width:10px; border-radius:4px 4px 0 0;
+  background:rgba(255,255,255,.35);
+}
+.bar.hi { background:rgba(255,255,255,.7); }
+
+/* SECTION HEADER */
+.sec-header {
+  display:flex; justify-content:space-between; align-items:center;
+  margin:18px 0 12px;
+}
+.sec-title { font-size:16px; font-weight:800; color:var(--text); }
+.sec-link  { font-size:13px; font-weight:700; color:var(--blue); cursor:pointer; }
+
+/* METRICS GRID */
+.metrics-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:6px; }
+.metric-card {
+  background:var(--white); border-radius:16px;
+  padding:14px; border:1.5px solid var(--border);
+}
+.metric-top { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.metric-icon {
+  width:36px; height:36px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.metric-icon.blue   { background:var(--blue-light); }
+.metric-icon.purple { background:var(--purple-light); }
+.metric-icon.teal   { background:var(--teal-light); }
+.metric-icon.orange { background:var(--orange-light); }
+.metric-icon svg    { width:20px; height:20px; }
+.metric-label { font-size:12px; color:var(--text-mid); font-weight:600; line-height:1.3; }
+.metric-value { font-size:28px; font-weight:900; color:var(--text); line-height:1; margin-bottom:5px; }
+.metric-delta {
+  display:flex; align-items:center; gap:4px;
+  font-size:11px; font-weight:700;
+}
+.metric-delta.up   { color:var(--green); }
+.metric-delta.down { color:var(--red); }
+.metric-delta span { color:var(--text-light); font-weight:500; }
+
+/* ACTIVITY */
+.activity-list { display:flex; flex-direction:column; gap:0; background:var(--white); border-radius:16px; border:1.5px solid var(--border); overflow:hidden; }
+.activity-item {
+  display:flex; align-items:center; gap:12px; padding:13px 14px;
+  border-bottom:1px solid var(--border); cursor:pointer; transition:background .15s;
+}
+.activity-item:last-child { border-bottom:none; }
+.activity-item:hover { background:var(--bg); }
+.act-icon {
+  width:38px; height:38px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.act-icon.blue   { background:var(--blue-light); }
+.act-icon.teal   { background:var(--teal-light); }
+.act-icon.orange { background:var(--orange-light); }
+.act-icon.purple { background:var(--purple-light); }
+.act-icon svg    { width:19px; height:19px; }
+.act-body { flex:1; }
+.act-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:2px; }
+.act-desc  { font-size:11px; color:var(--text-light); }
+.act-right { text-align:right; }
+.act-time  { font-size:11px; color:var(--text-light); white-space:nowrap; margin-bottom:4px; }
+.act-arrow { color:var(--text-light); font-size:16px; }
+
+/* QUICK ACCESS */
+.quick-grid {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:6px;
+  background:var(--white); border-radius:16px; border:1.5px solid var(--border);
+  padding:12px 8px;
+}
+.quick-item {
+  display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;
+  padding:8px 4px; border-radius:12px; transition:background .15s;
+}
+.quick-item:hover { background:var(--bg); }
+.quick-icon {
+  width:44px; height:44px; border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+}
+.quick-icon.blue   { background:var(--blue-light); }
+.quick-icon.teal   { background:var(--teal-light); }
+.quick-icon.green  { background:var(--green-light); }
+.quick-icon.orange { background:var(--orange-light); }
+.quick-icon.gray   { background:var(--bg); border:1.5px solid var(--border); }
+.quick-icon svg    { width:22px; height:22px; }
+.quick-label { font-size:10px; font-weight:700; color:var(--text-mid); text-align:center; line-height:1.3; }
+.quick-item.active .quick-label { color:var(--blue); font-weight:800; }
+
+/* BOTTOM NAV */
+.bottom-nav {
+  background:var(--white); border-top:1.5px solid var(--border);
+  padding:10px 0 18px; display:flex; flex-shrink:0;
+}
+.nav-item {
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer;
+}
+.nav-item svg { width:22px; height:22px; stroke:#bbb; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.nav-item.active svg { stroke:var(--blue); }
+.nav-item span { font-size:10px; color:#bbb; font-weight:600; }
+.nav-item.active span { color:var(--blue); font-weight:800; }
+
+  @media (min-width: 769px) {
+    .app {
+      min-height: calc(100vh - 40px);
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+    body { padding: 20px !important; }
+    .metrics-grid {
+      grid-template-columns: 1fr 1fr 1fr 1fr !important;
+    }
+  }
+  @media (max-width: 768px) {
+    body { padding: 0 !important; }
+    .app { border-radius: 0 !important; }
+  }
+</style>
+
+</head>
+<body>
+
+<div class="app">
+
+
+    <!-- SCROLL AREA -->
+    <div class="scroll-area">
+
+      <!-- TOP NAV -->
+      <div class="top-nav">
+        <div class="hamburger">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="nav-titles">
+          <div class="nav-main">Panel de control</div>
+          <div class="nav-sub">Bienvenido, Administrador</div>
+        </div>
+        <div class="notif-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 01-3.46 0"/>
+          </svg>
+          <div class="notif-badge">3</div>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <!-- HERO BANNER -->
+        <div class="hero-banner">
+          <div class="hero-left">
+            <div class="hero-tag">Resumen general</div>
+            <div class="hero-date">Hoy es 20 de mayo, 2024</div>
+            <div class="hero-status">
+              <div class="hero-dot"></div>
+              <div class="hero-status-text">Todo el sistema funciona</div>
+            </div>
+          </div>
+          <div class="hero-right">
+            <div class="hero-shield">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <polyline points="9 12 11 14 15 10"/>
+              </svg>
+            </div>
+            <div class="hero-chart">
+              <div class="bar" style="height:20px;"></div>
+              <div class="bar" style="height:28px;"></div>
+              <div class="bar hi" style="height:36px;"></div>
+              <div class="bar" style="height:24px;"></div>
+              <div class="bar hi" style="height:44px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- METRICS -->
+        <div class="sec-header">
+          <span class="sec-title">Métricas principales</span>
+          <span class="sec-link">Ver todas</span>
+        </div>
+
+        <div class="metrics-grid">
+          <!-- Usuarios -->
+          <div class="metric-card">
+            <div class="metric-top">
+              <div class="metric-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round">
+                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 010 7.75"/>
+                </svg>
+              </div>
+              <span class="metric-label">Usuarios<br>registrados</span>
+            </div>
+            <div class="metric-value">1,245</div>
+            <div class="metric-delta up">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+              12% <span>vs. mes anterior</span>
+            </div>
+          </div>
+
+          <!-- Citas hoy -->
+          <div class="metric-card">
+            <div class="metric-top">
+              <div class="metric-icon purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                  <circle cx="8" cy="15" r="1" fill="#8B5CF6"/>
+                  <circle cx="12" cy="15" r="1" fill="#8B5CF6"/>
+                </svg>
+              </div>
+              <span class="metric-label">Citas<br>hoy</span>
+            </div>
+            <div class="metric-value">32</div>
+            <div class="metric-delta up">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+              8% <span>vs. ayer</span>
+            </div>
+          </div>
+
+          <!-- Consultas -->
+          <div class="metric-card">
+            <div class="metric-top">
+              <div class="metric-icon teal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#1a7a6b" stroke-width="2" stroke-linecap="round">
+                  <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+                  <line x1="12" y1="11" x2="12" y2="17"/>
+                  <line x1="9" y1="14" x2="15" y2="14"/>
+                </svg>
+              </div>
+              <span class="metric-label">Consultas<br>realizadas</span>
+            </div>
+            <div class="metric-value">98</div>
+            <div class="metric-delta up">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+              15% <span>vs. ayer</span>
+            </div>
+          </div>
+
+          <!-- Medicamentos -->
+          <div class="metric-card">
+            <div class="metric-top">
+              <div class="metric-icon orange">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round">
+                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 002 8.5c0 2.3 1.5 4.05 3 5.5l7 7 7-7z"/>
+                </svg>
+              </div>
+              <span class="metric-label">Medicamentos<br>registrados</span>
+            </div>
+            <div class="metric-value">256</div>
+            <div class="metric-delta up">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+              5% <span>vs. mes anterior</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTIVITY -->
+        <div class="sec-header">
+          <span class="sec-title">Actividad reciente</span>
+          <span class="sec-link">Ver todas</span>
+        </div>
+
+        <div class="activity-list">
+          <!-- Usuario -->
+          <div class="activity-item">
+            <div class="act-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <div class="act-body">
+              <div class="act-title">Nuevo usuario registrado</div>
+              <div class="act-desc">María González se registró</div>
+            </div>
+            <div class="act-right">
+              <div class="act-time">09:30 AM</div>
+              <div class="act-arrow">›</div>
+            </div>
+          </div>
+
+          <!-- Cita -->
+          <div class="activity-item">
+            <div class="act-icon teal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1a7a6b" stroke-width="2" stroke-linecap="round">
+                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </div>
+            <div class="act-body">
+              <div class="act-title">Nueva cita agendada</div>
+              <div class="act-desc">Cita con Dr. Juan Pérez</div>
+            </div>
+            <div class="act-right">
+              <div class="act-time">08:45 AM</div>
+              <div class="act-arrow">›</div>
+            </div>
+          </div>
+
+          <!-- Medicamento -->
+          <div class="activity-item">
+            <div class="act-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 002 8.5c0 2.3 1.5 4.05 3 5.5l7 7 7-7z"/>
+              </svg>
+            </div>
+            <div class="act-body">
+              <div class="act-title">Medicamento agregado</div>
+              <div class="act-desc">Paracetamol 500mg añadido</div>
+            </div>
+            <div class="act-right">
+              <div class="act-time">08:15 AM</div>
+              <div class="act-arrow">›</div>
+            </div>
+          </div>
+
+          <!-- Centro de salud -->
+          <div class="activity-item">
+            <div class="act-icon purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                <polyline points="9,22 9,12 15,12 15,22"/>
+              </svg>
+            </div>
+            <div class="act-body">
+              <div class="act-title">Nuevo centro de salud</div>
+              <div class="act-desc">Centro de Salud San Martín</div>
+            </div>
+            <div class="act-right">
+              <div class="act-time">Ayer, 04:30 PM</div>
+              <div class="act-arrow">›</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUICK ACCESS -->
+        <div class="sec-header">
+          <span class="sec-title">Accesos rápidos</span>
+        </div>
+
+        <div class="quick-grid" style="margin-bottom:18px;">
+          <div class="quick-item" onclick="window.location.href='pacientes_app.html'">
+            <div class="quick-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+                <path d="M16 3.13a4 4 0 010 7.75"/>
+              </svg>
+            </div>
+            <span class="quick-label">Pacientes</span>
+          </div>
+
+          <div class="quick-item active" onclick="window.location.href='citas_medicas_app.html'">
+            <div class="quick-icon teal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1a7a6b" stroke-width="2" stroke-linecap="round">
+                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </div>
+            <span class="quick-label" style="color:#1a7a6b;font-weight:800;">Citas</span>
+          </div>
+
+          <div class="quick-item" onclick="window.location.href='especialidades_app.html'">
+            <div class="quick-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                <line x1="12" y1="11" x2="12" y2="17"/>
+                <line x1="9" y1="14" x2="15" y2="14"/>
+              </svg>
+            </div>
+            <span class="quick-label">Especialidades</span>
+          </div>
+
+          <div class="quick-item" onclick="window.location.href='horarios_medicos_app.html'">
+            <div class="quick-icon orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <span class="quick-label" style="font-weight:800;color:var(--text);">Horarios</span>
+          </div>
+
+          <div class="quick-item" onclick="window.location.href='configuraciones_app.html'">
+            <div class="quick-icon gray">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+              </svg>
+            </div>
+            <span class="quick-label">Configuración</span>
+          </div>
+        </div>
+
+      </div><!-- /content -->
+    </div><!-- /scroll-area -->
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+      <div class="nav-item active" onclick="window.location.href='panel_control.html'">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        <span>Inicio</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='salud_ya_doctores.html'">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Doctores</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='horarios_medicos_app.html'">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Horarios</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='reportes_app.html'">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Reportes</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='pacientes_app.html'">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        <span>Pacientes</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='configuraciones_app.html'">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        <span>Más</span>
+      </div>
+    </div>
+
+<script>
+// Animate metric counters on load
+const targets = { m0: 1245, m1: 32, m2: 98, m3: 256 };
+const values  = document.querySelectorAll('.metric-value');
+values.forEach((el, i) => {
+  const target = [1245, 32, 98, 256][i];
+  const formatted = [true, false, false, false][i];
+  let current = 0;
+  const step = Math.ceil(target / 40);
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = formatted ? current.toLocaleString() : current;
+    if (current >= target) clearInterval(timer);
+  }, 30);
+});
+
+// Activity item hover effect
+document.querySelectorAll('.activity-item').forEach(item => {
+  item.addEventListener('click', () => {
+    item.style.background = '#EFF6FF';
+    setTimeout(() => item.style.background = '', 300);
+  });
+});
+
+// Quick item click
+document.querySelectorAll('.quick-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.quick-item').forEach(i => {
+      i.classList.remove('active');
+      i.querySelector('.quick-label').style.color = '';
+      i.querySelector('.quick-label').style.fontWeight = '';
+    });
+    item.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Nueva Cita – Salud Ya</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --teal:       #1a7a6b;
+  --teal-light: #e8f8f4;
+  --teal-mid:   #a0ddd2;
+  --teal-dark:  #0f5248;
+  --text:       #111827;
+  --text-mid:   #4B5563;
+  --text-light: #9CA3AF;
+  --border:     #E5E7EB;
+  --bg:         #F9FAFB;
+  --white:      #ffffff;
+  --red:        #EF4444;
+  --red-light:  #FEE2E2;
+  --yellow:     #F59E0B;
+  --yellow-light:#FEF3C7;
+  --blue:       #3B82F6;
+  --blue-light: #EFF6FF;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0d2d2a 0%, #1a4a44 50%, #0d2d2a 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Nunito', sans-serif;
+  padding: 20px;
+}
+
+/* ── PHONE CONTAINER ── */
+.app {
+  background: #f4f6f9;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: -apple-system, 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.dynamic-island {
+  position:absolute; top:14px; left:50%; transform:translateX(-50%);
+  width:126px; height:37px; background:#111; border-radius:20px; z-index:20;
+}
+
+/* STATUS BAR */
+
+.status-time { font-size:15px; font-weight:700; color:var(--text); }
+.status-icons { display:flex; align-items:center; gap:5px; }
+
+/* SCROLL AREA */
+.scroll-area {
+  max-height: 760px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  background: var(--bg);
+}
+.scroll-area::-webkit-scrollbar { display:none; }
+
+/* TOP NAV */
+.top-nav {
+  background: var(--white);
+  padding: 10px 20px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom: 1px solid var(--border);
+  position:sticky; top:0; z-index:10;
+}
+.back-btn {
+  width:34px; height:34px; border-radius:50%; background:var(--bg);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  border: 1.5px solid var(--border); transition: all .15s;
+}
+.back-btn:hover { background:var(--teal-light); border-color:var(--teal-mid); }
+.back-btn svg { width:18px; height:18px; stroke:var(--text); fill:none; stroke-width:2.5; stroke-linecap:round; }
+.nav-title { font-size:17px; font-weight:800; color:var(--text); }
+.help-btn {
+  width:34px; height:34px; border-radius:50%; border:1.5px solid var(--border);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  font-size:14px; font-weight:700; color:var(--text-mid);
+}
+
+/* ── STEPPER ── */
+.stepper {
+  background: var(--white);
+  padding: 16px 20px 14px;
+  display:flex; align-items:flex-start;
+  border-bottom: 1px solid var(--border);
+}
+.step-wrap {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  gap:6px; position:relative;
+}
+.step-wrap:not(:last-child)::after {
+  content:''; position:absolute;
+  top:15px; left:60%; right:-40%;
+  height:2px; background:var(--border); z-index:0;
+  transition: background .4s;
+}
+.step-wrap.done:not(:last-child)::after { background:var(--teal); }
+
+.step-circle {
+  width:30px; height:30px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; font-weight:800; z-index:1; position:relative;
+  transition: all .3s;
+}
+.step-wrap.inactive .step-circle { background:var(--bg); color:var(--text-light); border:2px solid var(--border); }
+.step-wrap.active  .step-circle { background:var(--teal); color:white; box-shadow:0 0 0 4px rgba(26,122,107,.2); }
+.step-wrap.done    .step-circle { background:var(--teal); color:white; }
+.step-label { font-size:10px; font-weight:600; }
+.step-wrap.inactive .step-label { color:var(--text-light); }
+.step-wrap.active   .step-label { color:var(--teal); }
+.step-wrap.done     .step-label { color:var(--teal); }
+
+/* ── SECTIONS (pages) ── */
+.page { display:none; animation: fadeSlide .3s ease; }
+.page.active { display:block; }
+@keyframes fadeSlide {
+  from { opacity:0; transform:translateX(18px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+.section-head {
+  background:var(--white); padding:16px 20px 6px;
+}
+.section-head h2 { font-size:18px; font-weight:800; color:var(--text); margin-bottom:3px; }
+.section-head p  { font-size:13px; color:var(--text-light); margin-bottom:4px; }
+
+/* ── SPECIALTY GRID ── */
+.specialty-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:10px;
+  padding:14px 20px;
+  background:var(--white);
+}
+.specialty-card {
+  border:1.5px solid var(--border);
+  border-radius:14px; padding:13px 5px 10px;
+  display:flex; flex-direction:column; align-items:center; gap:7px;
+  cursor:pointer; transition:all .18s; background:var(--white);
+  position:relative;
+}
+.specialty-card:hover { border-color:var(--teal-mid); background:var(--teal-light); }
+.specialty-card.selected { border-color:var(--teal); background:var(--teal-light); }
+.specialty-icon { width:42px; height:42px; display:flex; align-items:center; justify-content:center; }
+.specialty-icon svg { width:34px; height:34px; stroke:var(--teal); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.specialty-name { font-size:10px; font-weight:700; color:var(--text); text-align:center; line-height:1.3; }
+.check-badge {
+  position:absolute; top:-7px; right:-7px;
+  width:20px; height:20px; border-radius:50%;
+  background:var(--teal); display:none;
+  align-items:center; justify-content:center;
+  border:2px solid white;
+}
+.check-badge svg { width:11px; height:11px; stroke:white; fill:none; stroke-width:2.5; stroke-linecap:round; }
+.specialty-card.selected .check-badge { display:flex; }
+
+/* ── AI BANNER ── */
+.ai-banner {
+  margin:14px 20px;
+  border:1.5px solid #dbeafe;
+  border-radius:16px; padding:14px;
+  display:flex; align-items:center; gap:12px;
+  background:linear-gradient(135deg,#eff6ff,#e0f2fe);
+  cursor:pointer; transition: transform .15s;
+}
+.ai-banner:hover { transform:scale(1.01); }
+.ai-avatar {
+  width:52px; height:52px; flex-shrink:0;
+  background:white; border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 2px 8px rgba(59,130,246,.15);
+}
+.ai-avatar svg { width:34px; height:34px; }
+.ai-text-wrap .ai-title { font-size:13px; font-weight:800; color:#1e40af; margin-bottom:3px; }
+.ai-text-wrap .ai-desc  { font-size:11px; color:#3b82f6; line-height:1.4; margin-bottom:5px; }
+.ai-text-wrap .ai-link  { font-size:12px; font-weight:800; color:#2563eb; }
+
+/* AI MODAL */
+.ai-modal-overlay {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.4);
+  z-index:100; align-items:flex-end; justify-content:center;
+}
+.ai-modal-overlay.open { display:flex; }
+.ai-modal {
+  width:390px; background:white; border-radius:28px 28px 0 0;
+  padding:20px 20px 32px; max-height:520px; overflow-y:auto;
+  animation: slideUp .3s ease;
+}
+@keyframes slideUp {
+  from { transform:translateY(100%); } to { transform:translateY(0); }
+}
+.modal-handle { width:40px; height:4px; background:#e5e7eb; border-radius:4px; margin:0 auto 16px; }
+.modal-title { font-size:17px; font-weight:800; color:var(--text); margin-bottom:4px; }
+.modal-sub   { font-size:13px; color:var(--text-light); margin-bottom:16px; }
+.symptom-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+.chip {
+  padding:8px 14px; border-radius:20px; border:1.5px solid var(--border);
+  font-size:12px; font-weight:600; color:var(--text-mid);
+  cursor:pointer; background:white; transition:all .15s;
+}
+.chip.selected { background:var(--teal-light); border-color:var(--teal); color:var(--teal); }
+.ai-result {
+  background:var(--teal-light); border:1.5px solid var(--teal-mid);
+  border-radius:14px; padding:14px; margin-bottom:14px; display:none;
+}
+.ai-result.show { display:block; }
+.ai-result-title { font-size:13px; font-weight:800; color:var(--teal); margin-bottom:4px; }
+.ai-result-text  { font-size:12px; color:var(--teal-dark); line-height:1.5; }
+.modal-btn {
+  width:100%; padding:14px; border-radius:14px;
+  background:var(--teal); color:white; border:none;
+  font-family:'Nunito',sans-serif; font-size:15px; font-weight:800;
+  cursor:pointer; transition:background .15s;
+}
+.modal-btn:hover { background:var(--teal-dark); }
+
+/* ── NEXT BUTTON ── */
+.next-btn-wrap { padding:16px 20px; background:var(--white); border-top:1px solid var(--border); }
+.next-btn {
+  width:100%; padding:15px; border-radius:16px;
+  background:var(--teal); color:white; border:none;
+  font-family:'Nunito',sans-serif; font-size:16px; font-weight:800;
+  cursor:pointer; transition:all .2s; letter-spacing:.3px;
+  box-shadow: 0 4px 14px rgba(26,122,107,.35);
+}
+.next-btn:hover { background:var(--teal-dark); transform:translateY(-1px); }
+.next-btn:disabled { background:#ccc; cursor:not-allowed; box-shadow:none; transform:none; }
+
+/* ── DOCTOR CARDS ── */
+.doctor-list { padding:14px 20px; background:var(--white); display:flex; flex-direction:column; gap:12px; }
+.doctor-card {
+  border:1.5px solid var(--border); border-radius:16px; padding:14px;
+  display:flex; align-items:center; gap:12px;
+  cursor:pointer; transition:all .18s; background:white;
+}
+.doctor-card:hover { border-color:var(--teal-mid); background:var(--teal-light); }
+.doctor-card.selected { border-color:var(--teal); background:var(--teal-light); }
+.doc-avatar {
+  width:56px; height:56px; border-radius:16px; flex-shrink:0;
+  display:flex; align-items:flex-end; justify-content:center;
+  overflow:hidden;
+}
+.doc-info { flex:1; }
+.doc-name     { font-size:14px; font-weight:800; color:var(--text); }
+.doc-spec     { font-size:12px; color:var(--teal); font-weight:600; margin-bottom:5px; }
+.doc-meta     { display:flex; gap:10px; }
+.doc-rating   { font-size:11px; color:var(--text-mid); display:flex; align-items:center; gap:3px; }
+.doc-exp      { font-size:11px; color:var(--text-mid); }
+.doc-avail    { font-size:11px; font-weight:700; }
+.doc-avail.yes { color:var(--teal); }
+.doc-avail.no  { color:var(--red); }
+.doc-check { width:28px; height:28px; flex-shrink:0; }
+.doc-check svg { width:28px; height:28px; }
+
+/* ── CALENDAR ── */
+.calendar-wrap { padding:14px 20px; background:var(--white); }
+.cal-header {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:14px;
+}
+.cal-month { font-size:16px; font-weight:800; color:var(--text); }
+.cal-nav-btn {
+  width:32px; height:32px; border-radius:10px;
+  background:var(--bg); border:1.5px solid var(--border);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.cal-nav-btn svg { width:16px; height:16px; stroke:var(--text); fill:none; stroke-width:2.5; stroke-linecap:round; }
+.cal-weekdays { display:grid; grid-template-columns:repeat(7,1fr); margin-bottom:6px; }
+.cal-wd { font-size:11px; font-weight:700; color:var(--text-light); text-align:center; padding:4px 0; }
+.cal-days { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
+.cal-day {
+  aspect-ratio:1; display:flex; align-items:center; justify-content:center;
+  border-radius:10px; font-size:13px; font-weight:600; color:var(--text);
+  cursor:pointer; transition:all .15s;
+}
+.cal-day:hover:not(.empty):not(.past)  { background:var(--teal-light); color:var(--teal); }
+.cal-day.past    { color:var(--text-light); cursor:not-allowed; }
+.cal-day.empty   { cursor:default; }
+.cal-day.today   { border:2px solid var(--teal); color:var(--teal); font-weight:800; }
+.cal-day.selected { background:var(--teal); color:white !important; font-weight:800; }
+
+/* TIME SLOTS */
+.time-slots-wrap { padding:0 20px 14px; background:var(--white); }
+.time-slots-label { font-size:14px; font-weight:800; color:var(--text); margin-bottom:10px; }
+.time-slots { display:flex; flex-wrap:wrap; gap:8px; }
+.time-slot {
+  padding:8px 14px; border-radius:12px;
+  border:1.5px solid var(--border); background:white;
+  font-size:12px; font-weight:700; color:var(--text-mid);
+  cursor:pointer; transition:all .15s;
+}
+.time-slot:hover { border-color:var(--teal-mid); color:var(--teal); background:var(--teal-light); }
+.time-slot.selected { background:var(--teal); color:white; border-color:var(--teal); }
+.time-slot.taken { background:var(--bg); color:var(--text-light); cursor:not-allowed; border-color:var(--border); text-decoration:line-through; }
+
+/* ── CONFIRM PAGE ── */
+.confirm-wrap { padding:16px 20px; background:var(--white); }
+.confirm-card {
+  border:1.5px solid var(--border); border-radius:18px;
+  overflow:hidden; margin-bottom:14px;
+}
+.confirm-header {
+  background:linear-gradient(135deg,var(--teal),#2ecc87);
+  padding:18px 18px 14px;
+  display:flex; align-items:center; gap:12px;
+}
+.confirm-header-title { font-size:16px; font-weight:800; color:white; }
+.confirm-header-sub   { font-size:12px; color:rgba(255,255,255,.8); margin-top:2px; }
+.confirm-rows { padding:14px 18px; display:flex; flex-direction:column; gap:12px; }
+.confirm-row {
+  display:flex; align-items:center; gap:10px;
+}
+.confirm-icon {
+  width:36px; height:36px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.confirm-icon.teal { background:var(--teal-light); }
+.confirm-icon.blue { background:var(--blue-light); }
+.confirm-icon.yel  { background:var(--yellow-light); }
+.confirm-icon svg  { width:18px; height:18px; }
+.confirm-row-label { font-size:11px; color:var(--text-light); font-weight:600; }
+.confirm-row-val   { font-size:14px; font-weight:800; color:var(--text); }
+
+/* SUCCESS */
+.success-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.5); z-index:200;
+  align-items:center; justify-content:center;
+}
+.success-overlay.show { display:flex; }
+.success-card {
+  width:340px; background:white; border-radius:28px;
+  padding:32px 24px; text-align:center;
+  animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn {
+  from { transform:scale(.7); opacity:0; }
+  to   { transform:scale(1); opacity:1; }
+}
+.success-icon-wrap {
+  width:80px; height:80px; border-radius:50%;
+  background:var(--teal-light); margin:0 auto 16px;
+  display:flex; align-items:center; justify-content:center;
+}
+.success-icon-wrap svg { width:44px; height:44px; stroke:var(--teal); fill:none; stroke-width:2.5; stroke-linecap:round; }
+.success-title { font-size:22px; font-weight:900; color:var(--text); margin-bottom:6px; }
+.success-sub   { font-size:13px; color:var(--text-light); line-height:1.5; margin-bottom:20px; }
+.success-detail {
+  background:var(--teal-light); border-radius:14px;
+  padding:14px; text-align:left; margin-bottom:20px;
+}
+.success-detail-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.success-detail-row:last-child { margin-bottom:0; }
+.success-detail-label { font-size:11px; color:var(--text-light); font-weight:600; }
+.success-detail-val   { font-size:13px; color:var(--text); font-weight:700; }
+.success-btn {
+  width:100%; padding:14px; border-radius:14px;
+  background:var(--teal); color:white; border:none;
+  font-family:'Nunito',sans-serif; font-size:15px; font-weight:800;
+  cursor:pointer;
+}
+
+/* RECENT APPTS */
+.recents-section { padding:14px 20px 0; }
+.recents-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.recents-title { font-size:15px; font-weight:800; color:var(--text); }
+.ver-todas { font-size:13px; font-weight:700; color:var(--teal); cursor:pointer; }
+.appt-card {
+  border:1.5px solid var(--border); border-radius:16px; padding:14px 16px;
+  display:flex; align-items:center; gap:12px; background:white;
+  margin-bottom:10px; cursor:pointer; transition:all .15s;
+}
+.appt-card:hover { border-color:var(--teal-mid); }
+.appt-date-col { text-align:center; min-width:38px; }
+.appt-month { font-size:10px; font-weight:700; color:var(--text-light); letter-spacing:.5px; text-transform:uppercase; }
+.appt-day   { font-size:26px; font-weight:900; color:var(--text); line-height:1; }
+.appt-wday  { font-size:10px; color:var(--text-light); font-weight:500; }
+.appt-info  { flex:1; }
+.appt-time  { font-size:13px; font-weight:700; color:var(--teal); margin-bottom:2px; }
+.appt-type  { font-size:14px; font-weight:800; color:var(--text); margin-bottom:2px; }
+.appt-doc   { font-size:12px; color:var(--text-mid); margin-bottom:3px; }
+.appt-loc   { font-size:11px; color:var(--text-light); display:flex; align-items:center; gap:3px; }
+.appt-loc svg { width:12px; height:12px; stroke:var(--text-light); fill:none; stroke-width:2; }
+.badge { padding:5px 10px; border-radius:20px; font-size:11px; font-weight:700; white-space:nowrap; }
+.badge.confirmed { background:var(--teal-light); color:var(--teal); border:1px solid var(--teal-mid); }
+.badge.pending   { background:var(--yellow-light); color:#92400e; border:1px solid #fcd34d; }
+.badge.cancelled { background:var(--red-light); color:var(--red); border:1px solid #fca5a5; }
+
+/* SEPARATOR */
+.sep { height:8px; background:var(--bg); }
+
+/* BOTTOM NAV */
+.bottom-nav {
+  background:white; border-top:1px solid var(--border);
+  padding:10px 0 18px; display:flex;
+}
+.nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; }
+.nav-item svg { width:22px; height:22px; stroke:#bbb; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.nav-item.active svg { stroke:var(--teal); }
+.nav-item span { font-size:10px; color:#bbb; font-weight:600; }
+.nav-item.active span { color:var(--teal); font-weight:800; }
+
+/* SPECIALTY DOTS */
+.specialty-dots { display:flex; gap:4px; }
+.specialty-dots span { width:7px; height:7px; border-radius:50%; background:var(--teal); }
+
+  @media (min-width: 769px) {
+    .app {
+      max-width: 1200px;
+      margin: 0 auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      border-radius: 20px;
+      height: calc(100vh - 40px);
+    }
+    body {
+      padding: 20px !important;
+    }
+  }
+  @media (max-width: 768px) {
+    body {
+      padding: 0 !important;
+    }
+    .app {
+      max-width: 100% !important;
+      border-radius: 0 !important;
+      height: 100vh !important;
+    }
+  }
+  @media (max-width: 320px) {
+    .specialty-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="app" id="appContainer">
+  <!-- Scroll Area -->
+  <div class="scroll-area" id="scrollArea">
+
+      <!-- TOP NAV -->
+      <div class="top-nav">
+        <div class="back-btn" onclick="goBack()">
+          <svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg>
+        </div>
+        <span class="nav-title" id="navTitle">Nueva cita</span>
+        <div class="help-btn" onclick="openAI()">?</div>
+      </div>
+
+      <!-- STEPPER -->
+      <div class="stepper" id="stepper">
+        <div class="step-wrap active" id="sw1">
+          <div class="step-circle">1</div>
+          <span class="step-label">Especialidad</span>
+        </div>
+        <div class="step-wrap inactive" id="sw2">
+          <div class="step-circle">2</div>
+          <span class="step-label">Doctor</span>
+        </div>
+        <div class="step-wrap inactive" id="sw3">
+          <div class="step-circle">3</div>
+          <span class="step-label">Fecha y hora</span>
+        </div>
+        <div class="step-wrap inactive" id="sw4">
+          <div class="step-circle">4</div>
+          <span class="step-label">Confirmar</span>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           PAGE 1 – ESPECIALIDAD
+      ═══════════════════════════════════ -->
+      <div class="page active" id="page1">
+        <div class="section-head">
+          <h2>¿Qué especialidad necesitas?</h2>
+          <p>Selecciona el área médica que deseas consultar.</p>
+        </div>
+
+        <div class="specialty-grid">
+          <!-- Medicina General -->
+          <div class="specialty-card" data-spec="Medicina General" onclick="selectSpec(this)">
+            <div class="specialty-icon">
+              <svg viewBox="0 0 48 48"><circle cx="24" cy="16" r="7" stroke-width="2"/><path d="M12 38c0-6.6 5.4-12 12-12s12 5.4 12 12" stroke-width="2"/><path d="M21 32l3 3 6-6" stroke-width="2"/></svg>
+            </div>
+            <span class="specialty-name">Medicina General</span>
+            <div class="check-badge"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+          </div>
+          <!-- Cardiología -->
+          <div class="specialty-card" data-spec="Cardiología" onclick="selectSpec(this)">
+            <div class="specialty-icon">
+              <svg viewBox="0 0 48 48"><path d="M24 36s-14-9-14-19a8 8 0 0116 0 8 8 0 0116 0c0 10-14 19-14 19z" stroke-width="2"/><path d="M16 22h4l2-4 3 8 2-4h5" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <span class="specialty-name">Cardiología</span>
+            <div class="check-badge"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+          </div>
+          <!-- Neumología -->
+          <div class="specialty-card" data-spec="Neumología" onclick="selectSpec(this)">
+            <div class="specialty-icon">
+              <svg viewBox="0 0 48 48"><path d="M24 10v6" stroke-width="2" stroke-linecap="round"/><path d="M24 16c-2 2-8 4-10 8s-2 8 2 10 8-2 8-6v-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 16c2 2 8 4 10 8s2 8-2 10-8-2-8-6v-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="specialty-name">Neumología</span>
+            <div class="check-badge"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+          </div>
+          <!-- Gastro -->
+          <div class="specialty-card" data-spec="Gastroenterología" onclick="selectSpec(this)">
+            <div class="specialty-icon">
+              <svg viewBox="0 0 48 48"><path d="M20 10c0 0-6 2-6 10s4 10 4 16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 10c4 0 10 2 10 8s-6 8-6 14s2 6 2 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="24" cy="22" rx="4" ry="4" stroke-width="1.8"/></svg>
+            </div>
+            <span class="specialty-name">Gastroentero­logía</span>
+            <div class="check-badge"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+          </div>
+          <!-- Pediatría -->
+          <div class="specialty-card" data-spec="Pediatría" onclick="selectSpec(this)">
+            <div class="specialty-icon">
+              <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="14" stroke-width="2"/><circle cx="19" cy="21" r="2" fill="#1a7a6b"/><circle cx="29" cy="21" r="2" fill="#1a7a6b"/><path d="M18 29c1.5 3 10.5 3 12 0" stroke-width="1.8" stroke-linecap="round"/><path d="M14 18c-2-4 2-8 6-6" stroke-width="1.5" stroke-linecap="round"/><path d="M34 18c2-4-2-8-6-6" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <span class="specialty-name">Pediatría</span>
+            <div class="check-badge"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+          </div>
+          <!-- Ginecología -->
+          <div class="specialty-card" data-spec="Ginecología" onclick="selectSpec(this)">
+            <div class="specialty-icon">
+              <svg viewBox="0 0 48 48"><circle cx="24" cy="20" r="10" stroke-width="2"/><line x1="24" y1="30" x2="24" y2="40" stroke-width="2" stroke-linecap="round"/><line x1="18" y1="36" x2="30" y2="36" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <span class="specialty-name">Ginecología</span>
+            <div class="check-badge"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+          </div>
+          <!-- Psicología -->
+          <div class="specialty-card" data-spec="Psicología" onclick="selectSpec(this)">
+            <div class="specialty-icon">
+              <svg viewBox="0 0 48 48"><path d="M16 22c0-8 16-8 16 0s-4 10-8 10-8-2-8-10z" stroke-width="2"/><path d="M20 16c1-4 4-8 4-8s3 4 4 8" stroke-width="1.8" stroke-linecap="round"/><circle cx="21" cy="23" r="1.5" fill="#1a7a6b"/><circle cx="27" cy="23" r="1.5" fill="#1a7a6b"/><path d="M21 27c1 1.5 5 1.5 6 0" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <span class="specialty-name">Psicología</span>
+            <div class="check-badge"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+          </div>
+          <!-- Otras -->
+          <div class="specialty-card" data-spec="Otras especialidades" onclick="selectSpec(this)">
+            <div class="specialty-icon">
+              <div class="specialty-dots"><span></span><span></span><span></span></div>
+            </div>
+            <span class="specialty-name">Otras especialidades</span>
+            <div class="check-badge"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+          </div>
+        </div>
+
+        <!-- AI Banner -->
+        <div class="ai-banner" onclick="openAI()">
+          <div class="ai-avatar">
+            <svg viewBox="0 0 48 48" fill="none">
+              <rect x="10" y="14" width="28" height="22" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+              <circle cx="18" cy="24" r="3.5" fill="#3b82f6"/>
+              <circle cx="30" cy="24" r="3.5" fill="#3b82f6"/>
+              <path d="M18 32h12" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round"/>
+              <rect x="21" y="7" width="6" height="7" rx="1.5" fill="#93c5fd"/>
+              <line x1="24" y1="7" x2="24" y2="14" stroke="#3b82f6" stroke-width="1.5"/>
+              <circle cx="38" cy="38" r="6" fill="#3b82f6"/>
+              <path d="M35.5 38.5l2 1.5 3-3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="ai-text-wrap">
+            <div class="ai-title">¿No sabes qué especialidad elegir?</div>
+            <div class="ai-desc">Nuestro asistente IA te orienta según tus síntomas.</div>
+            <div class="ai-link">Consultar ahora ›</div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <!-- Recent appointments -->
+        <div class="recents-section" style="background:white;padding-top:16px;">
+          <div class="recents-header">
+            <span class="recents-title">Citas anteriores</span>
+            <span class="ver-todas">Ver todas</span>
+          </div>
+          <div class="appt-card">
+            <div class="appt-date-col">
+              <div class="appt-month">JUN</div>
+              <div class="appt-day">25</div>
+              <div class="appt-wday">Mié</div>
+            </div>
+            <div class="appt-info">
+              <div class="appt-time">10:00 AM</div>
+              <div class="appt-type">Medicina General</div>
+              <div class="appt-doc">Dra. Laura Pérez</div>
+              <div class="appt-loc">
+                <svg viewBox="0 0 24 24"><path d="M12 2C8.7 2 6 4.7 6 8c0 5.3 6 14 6 14s6-8.7 6-14c0-3.3-2.7-6-6-6z" stroke-width="2"/><circle cx="12" cy="8" r="2" fill="#9CA3AF"/></svg>
+                Centro de Salud Central
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+              <span class="badge confirmed">Confirmada</span>
+              <span style="color:#ccc;font-size:18px;">›</span>
+            </div>
+          </div>
+          <div class="appt-card">
+            <div class="appt-date-col">
+              <div class="appt-month">MAY</div>
+              <div class="appt-day">10</div>
+              <div class="appt-wday">Sáb</div>
+            </div>
+            <div class="appt-info">
+              <div class="appt-time">3:30 PM</div>
+              <div class="appt-type">Cardiología</div>
+              <div class="appt-doc">Dr. Marcos Vidal</div>
+              <div class="appt-loc">
+                <svg viewBox="0 0 24 24"><path d="M12 2C8.7 2 6 4.7 6 8c0 5.3 6 14 6 14s6-8.7 6-14c0-3.3-2.7-6-6-6z" stroke-width="2"/><circle cx="12" cy="8" r="2" fill="#9CA3AF"/></svg>
+                Clínica San Marcos
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+              <span class="badge pending">Pendiente</span>
+              <span style="color:#ccc;font-size:18px;">›</span>
+            </div>
+          </div>
+          <div class="appt-card" style="margin-bottom:14px;">
+            <div class="appt-date-col">
+              <div class="appt-month">ABR</div>
+              <div class="appt-day">3</div>
+              <div class="appt-wday">Jue</div>
+            </div>
+            <div class="appt-info">
+              <div class="appt-time">9:00 AM</div>
+              <div class="appt-type">Psicología</div>
+              <div class="appt-doc">Dr. Andrés Toro</div>
+              <div class="appt-loc">
+                <svg viewBox="0 0 24 24"><path d="M12 2C8.7 2 6 4.7 6 8c0 5.3 6 14 6 14s6-8.7 6-14c0-3.3-2.7-6-6-6z" stroke-width="2"/><circle cx="12" cy="8" r="2" fill="#9CA3AF"/></svg>
+                Centro Mente Sana
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+              <span class="badge cancelled">Cancelada</span>
+              <span style="color:#ccc;font-size:18px;">›</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="next-btn-wrap">
+          <button class="next-btn" id="nextBtn1" disabled onclick="goToStep(2)">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           PAGE 2 – DOCTOR
+      ═══════════════════════════════════ -->
+      <div class="page" id="page2">
+        <div class="section-head" style="padding-bottom:14px;">
+          <h2>Elige tu médico</h2>
+          <p id="doctorSubtitle">Especialistas disponibles para tu consulta.</p>
+        </div>
+
+        <div class="doctor-list" id="doctorList">
+          <!-- Injected by JS -->
+        </div>
+
+        <div class="next-btn-wrap">
+          <button class="next-btn" id="nextBtn2" disabled onclick="goToStep(3)">Continuar →</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           PAGE 3 – FECHA Y HORA
+      ═══════════════════════════════════ -->
+      <div class="page" id="page3">
+        <div class="section-head">
+          <h2>Fecha y hora</h2>
+          <p>Selecciona cuándo quieres tu cita.</p>
+        </div>
+
+        <div class="calendar-wrap">
+          <div class="cal-header">
+            <div class="cal-nav-btn" onclick="changeMonth(-1)">
+              <svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg>
+            </div>
+            <span class="cal-month" id="calMonthLabel">Junio 2026</span>
+            <div class="cal-nav-btn" onclick="changeMonth(1)">
+              <svg viewBox="0 0 24 24"><polyline points="9,18 15,12 9,6"/></svg>
+            </div>
+          </div>
+          <div class="cal-weekdays">
+            <div class="cal-wd">Do</div><div class="cal-wd">Lu</div><div class="cal-wd">Ma</div>
+            <div class="cal-wd">Mi</div><div class="cal-wd">Ju</div><div class="cal-wd">Vi</div>
+            <div class="cal-wd">Sa</div>
+          </div>
+          <div class="cal-days" id="calDays"></div>
+        </div>
+
+        <div class="time-slots-wrap" id="timeSection" style="display:none;">
+          <div class="time-slots-label">Horarios disponibles</div>
+          <div class="time-slots" id="timeSlots"></div>
+        </div>
+
+        <div class="next-btn-wrap">
+          <button class="next-btn" id="nextBtn3" disabled onclick="goToStep(4)">Confirmar horario →</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           PAGE 4 – CONFIRMAR
+      ═══════════════════════════════════ -->
+      <div class="page" id="page4">
+        <div class="section-head">
+          <h2>Confirma tu cita</h2>
+          <p>Revisa los detalles antes de agendar.</p>
+        </div>
+
+        <div class="confirm-wrap">
+          <div class="confirm-card">
+            <div class="confirm-header">
+              <div>
+                <div class="confirm-header-title" id="cfHeaderTitle">Medicina General</div>
+                <div class="confirm-header-sub" id="cfHeaderSub">Cita médica agendada</div>
+              </div>
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                <circle cx="20" cy="20" r="18" fill="rgba(255,255,255,.2)"/>
+                <path d="M20 10v10l6 4" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="confirm-rows">
+              <div class="confirm-row">
+                <div class="confirm-icon teal">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#1a7a6b" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div>
+                  <div class="confirm-row-label">Médico</div>
+                  <div class="confirm-row-val" id="cfDoctor">—</div>
+                </div>
+              </div>
+              <div class="confirm-row">
+                <div class="confirm-icon blue">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <div>
+                  <div class="confirm-row-label">Fecha</div>
+                  <div class="confirm-row-val" id="cfDate">—</div>
+                </div>
+              </div>
+              <div class="confirm-row">
+                <div class="confirm-icon yel">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div>
+                  <div class="confirm-row-label">Hora</div>
+                  <div class="confirm-row-val" id="cfTime">—</div>
+                </div>
+              </div>
+              <div class="confirm-row">
+                <div class="confirm-icon teal">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#1a7a6b" stroke-width="2" stroke-linecap="round"><path d="M12 2C8.7 2 6 4.7 6 8c0 5.3 6 14 6 14s6-8.7 6-14c0-3.3-2.7-6-6-6z"/><circle cx="12" cy="8" r="2"/></svg>
+                </div>
+                <div>
+                  <div class="confirm-row-label">Centro</div>
+                  <div class="confirm-row-val" id="cfCenter">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div style="border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;background:white;">
+            <div style="font-size:13px;font-weight:800;color:var(--text);margin-bottom:8px;">Notas adicionales <span style="font-weight:500;color:var(--text-light);font-size:12px;">(opcional)</span></div>
+            <textarea placeholder="Describe brevemente el motivo de tu consulta..." style="width:100%;border:none;outline:none;font-family:'Nunito',sans-serif;font-size:13px;color:var(--text-mid);resize:none;height:64px;line-height:1.5;background:transparent;"></textarea>
+          </div>
+
+          <button class="next-btn" onclick="confirmAppointment()">✓ Confirmar y agendar cita</button>
+        </div>
+      </div>
+
+    </div><!-- /scroll-area -->
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="window.location.href='saludya_app.html'">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        <span>Inicio</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='salud_ya_medicos_screen.html'">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Médicos</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='salud_ya_medicamentos_screen.html'">
+        <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg>
+        <span>Medicamentos</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='salud_ya_perfil.html'">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Perfil</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI MODAL -->
+<div class="ai-modal-overlay" id="aiModal" onclick="closeAIOnBg(event)">
+  <div class="ai-modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Asistente IA 🤖</div>
+    <div class="modal-sub">Selecciona los síntomas que presentas y te recomendaré la especialidad adecuada.</div>
+    <div class="symptom-chips" id="symptomChips">
+      <div class="chip" onclick="toggleChip(this,'Dolor en el pecho')">Dolor en el pecho</div>
+      <div class="chip" onclick="toggleChip(this,'Tos persistente')">Tos persistente</div>
+      <div class="chip" onclick="toggleChip(this,'Fiebre alta')">Fiebre alta</div>
+      <div class="chip" onclick="toggleChip(this,'Dolor de cabeza')">Dolor de cabeza</div>
+      <div class="chip" onclick="toggleChip(this,'Dolor abdominal')">Dolor abdominal</div>
+      <div class="chip" onclick="toggleChip(this,'Ansiedad')">Ansiedad / Estrés</div>
+      <div class="chip" onclick="toggleChip(this,'Dificultad al respirar')">Dificultad al respirar</div>
+      <div class="chip" onclick="toggleChip(this,'Problemas digestivos')">Problemas digestivos</div>
+      <div class="chip" onclick="toggleChip(this,'Irregularidades menstruales')">Irregularidades menstruales</div>
+      <div class="chip" onclick="toggleChip(this,'Fiebre en niños')">Fiebre en niños</div>
+    </div>
+    <div class="ai-result" id="aiResult">
+      <div class="ai-result-title">💡 Recomendación del asistente</div>
+      <div class="ai-result-text" id="aiResultText"></div>
+    </div>
+    <button class="modal-btn" id="aiAnalyzeBtn" onclick="analyzeSymptoms()">Analizar síntomas</button>
+  </div>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="success-icon-wrap">
+      <svg viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12"/></svg>
+    </div>
+    <div class="success-title">¡Cita Agendada! 🎉</div>
+    <div class="success-sub">Tu cita ha sido confirmada y registrada exitosamente.</div>
+    <div class="success-detail">
+      <div class="success-detail-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a7a6b" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <div><div class="success-detail-label">Médico</div><div class="success-detail-val" id="sucDoctor"></div></div>
+      </div>
+      <div class="success-detail-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a7a6b" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <div><div class="success-detail-label">Fecha</div><div class="success-detail-val" id="sucDate"></div></div>
+      </div>
+      <div class="success-detail-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a7a6b" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div><div class="success-detail-label">Hora</div><div class="success-detail-val" id="sucTime"></div></div>
+      </div>
+    </div>
+    <button class="success-btn" onclick="closeSuccess()">Volver al inicio</button>
+  </div>
+</div>
+
+<script src="db.js"></script>
+<script>
+// ── STATE ──────────────────────────────────────────────────────────
+const state = {
+  step: 1,
+  specialty: null,
+  doctor: null,
+  date: null,
+  time: null,
+};
+
+// ── DOCTORS DATABASE ────────────────────────────────────────────────
+const DOCTORS = {
+  'Medicina General': [
+    { name:'Dr. Carlos Martínez', spec:'Medicina General', rating:4.9, exp:'12 años', center:'Centro de Salud Central', available:true,  color:'#4A90D9', initials:'CM' },
+    { name:'Dra. Laura Pérez',    spec:'Medicina General', rating:4.7, exp:'8 años',  center:'Clínica Santa Rosa',     available:true,  color:'#9B6DD6', initials:'LP' },
+    { name:'Dr. Raúl Quispe',     spec:'Medicina General', rating:4.5, exp:'5 años',  center:'Centro de Salud Norte',   available:false, color:'#F5A623', initials:'RQ' },
+  ],
+  'Cardiología': [
+    { name:'Dr. Marcos Vidal',   spec:'Cardiología', rating:5.0, exp:'18 años', center:'Clínica Corazón Sano',  available:true,  color:'#EF4444', initials:'MV' },
+    { name:'Dra. Sofía Ríos',    spec:'Cardiología', rating:4.8, exp:'14 años', center:'Hospital Central Lima',  available:true,  color:'#F06292', initials:'SR' },
+    { name:'Dr. Javier Moreno',  spec:'Cardiología', rating:4.6, exp:'9 años',  center:'Clínica San Marcos',     available:false, color:'#3B82F6', initials:'JM' },
+  ],
+  'Neumología': [
+    { name:'Dra. Carmen Llanos', spec:'Neumología', rating:4.8, exp:'11 años', center:'Centro Pulmonar Lima',   available:true,  color:'#2ECC87', initials:'CL' },
+    { name:'Dr. Hugo Salinas',   spec:'Neumología', rating:4.6, exp:'7 años',  center:'Clínica Respirar Bien',  available:true,  color:'#1a7a6b', initials:'HS' },
+  ],
+  'Gastroenterología': [
+    { name:'Dr. Óscar Pinto',    spec:'Gastroenterología', rating:4.9, exp:'16 años', center:'Clínica Digestiva Sur', available:true,  color:'#F59E0B', initials:'OP' },
+    { name:'Dra. Nadia Torres',  spec:'Gastroenterología', rating:4.7, exp:'10 años', center:'Centro Médico Lima',    available:true,  color:'#A78BFA', initials:'NT' },
+  ],
+  'Pediatría': [
+    { name:'Dra. Ana Flores',    spec:'Pediatría', rating:4.9, exp:'14 años', center:'Clínica Niños Felices', available:true,  color:'#F472B6', initials:'AF' },
+    { name:'Dr. Luis Córdova',   spec:'Pediatría', rating:4.7, exp:'9 años',  center:'Centro Salud Infantil', available:true,  color:'#60A5FA', initials:'LC' },
+    { name:'Dra. Rosa Medina',   spec:'Pediatría', rating:4.5, exp:'6 años',  center:'Pediátrica San Juan',   available:false, color:'#34D399', initials:'RM' },
+  ],
+  'Ginecología': [
+    { name:'Dra. Patricia Lara', spec:'Ginecología', rating:4.9, exp:'15 años', center:'Clínica Mujer Salud', available:true,  color:'#EC4899', initials:'PL' },
+    { name:'Dra. Valeria Rosas', spec:'Ginecología', rating:4.7, exp:'8 años',  center:'Centro Gineco Lima',  available:true,  color:'#F59E0B', initials:'VR' },
+  ],
+  'Psicología': [
+    { name:'Dr. Andrés Toro',    spec:'Psicología', rating:4.8, exp:'10 años', center:'Centro Mente Sana',   available:true,  color:'#8B5CF6', initials:'AT' },
+    { name:'Dra. Claudia Vera',  spec:'Psicología', rating:4.6, exp:'7 años',  center:'Psicología Integral', available:true,  color:'#06B6D4', initials:'CV' },
+    { name:'Dr. Sebastián Ruiz', spec:'Psicología', rating:4.4, exp:'4 años',  center:'Mente Clara Clínica', available:false, color:'#6366F1', initials:'SR' },
+  ],
+  'Otras especialidades': [
+    { name:'Dr. Fernando Paz',   spec:'Neurología',       rating:4.8, exp:'13 años', center:'Centro Neurológico',   available:true,  color:'#0891B2', initials:'FP' },
+    { name:'Dra. Milagros Ortiz',spec:'Dermatología',     rating:4.7, exp:'9 años',  center:'Clínica Piel Sana',    available:true,  color:'#D97706', initials:'MO' },
+    { name:'Dr. Ernesto Soto',   spec:'Oftalmología',     rating:4.6, exp:'11 años', center:'Centro Visión Lima',   available:false, color:'#059669', initials:'ES' },
+  ],
+};
+
+// ── CALENDAR STATE ──────────────────────────────────────────────────
+const today = new Date();
+let calYear  = today.getFullYear();
+let calMonth = today.getMonth();
+
+const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DAY_SLOTS = {
+  0: ['9:00 AM','10:00 AM','11:00 AM'],
+  1: ['8:30 AM','9:00 AM','10:30 AM','2:00 PM','3:00 PM'],
+  2: ['9:00 AM','11:00 AM','12:00 PM','4:00 PM'],
+  3: ['8:00 AM','9:30 AM','10:00 AM','1:00 PM','2:30 PM','4:00 PM'],
+  4: ['9:00 AM','10:00 AM','11:30 AM','3:00 PM'],
+  5: ['8:30 AM','10:00 AM','11:00 AM','12:30 PM','2:00 PM','3:30 PM','5:00 PM'],
+  6: ['10:00 AM','11:00 AM','12:00 PM'],
+};
+const TAKEN_SLOTS = ['10:00 AM','2:00 PM'];
+
+// ── STEP NAVIGATION ─────────────────────────────────────────────────
+function goToStep(n) {
+  document.getElementById('page' + state.step).classList.remove('active');
+  state.step = n;
+  document.getElementById('page' + n).classList.add('active');
+  updateStepper();
+  if (n === 2) renderDoctors();
+  if (n === 3) renderCalendar();
+  if (n === 4) renderConfirm();
+  document.getElementById('scrollArea').scrollTop = 0;
+}
+
+function goBack() {
+  if (state.step === 1) {
+    window.location.href = 'saludya_app.html';
+    return;
+  }
+  goToStep(state.step - 1);
+}
+
+function resetFlow() {
+  state.specialty = null; state.doctor = null; state.date = null; state.time = null;
+  document.querySelectorAll('.specialty-card').forEach(c => c.classList.remove('selected'));
+  goToStep(1);
+  document.getElementById('nextBtn1').disabled = true;
+}
+
+function updateStepper() {
+  [1,2,3,4].forEach(i => {
+    const sw = document.getElementById('sw'+i);
+    sw.className = 'step-wrap ' + (i < state.step ? 'done' : i === state.step ? 'active' : 'inactive');
+    if (i < state.step) sw.querySelector('.step-circle').innerHTML =
+      '<svg viewBox="0 0 12 12" width="14" height="14"><polyline points="2,6 5,9 10,3" stroke="white" fill="none" stroke-width="2.5" stroke-linecap="round"/></svg>';
+    else sw.querySelector('.step-circle').textContent = i;
+  });
+}
+
+// ── SPECIALTY ───────────────────────────────────────────────────────
+function selectSpec(card) {
+  document.querySelectorAll('.specialty-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  state.specialty = card.dataset.spec;
+  document.getElementById('nextBtn1').disabled = false;
+}
+
+// ── DOCTORS ─────────────────────────────────────────────────────────
+function renderDoctors() {
+  const doctors = DOCTORS[state.specialty] || [];
+  document.getElementById('doctorSubtitle').textContent =
+    'Especialistas en ' + state.specialty + ' disponibles para ti.';
+  const list = document.getElementById('doctorList');
+  list.innerHTML = '';
+  doctors.forEach((d, i) => {
+    const card = document.createElement('div');
+    card.className = 'doctor-card';
+    card.innerHTML = `
+      <div class="doc-avatar" style="background:${d.color}22;">
+        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:${d.color};">${d.initials}</div>
+      </div>
+      <div class="doc-info">
+        <div class="doc-name">${d.name}</div>
+        <div class="doc-spec">${d.spec}</div>
+        <div class="doc-meta">
+          <span class="doc-rating">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            ${d.rating}
+          </span>
+          <span class="doc-exp">· ${d.exp} exp.</span>
+        </div>
+        <div class="doc-avail ${d.available?'yes':'no'}">${d.available ? '● Disponible hoy' : '○ Sin disponibilidad hoy'}</div>
+      </div>
+      <div class="doc-check">
+        <svg viewBox="0 0 28 28" fill="none">
+          <circle cx="14" cy="14" r="13" stroke="${d.available ? '#e5e7eb' : '#e5e7eb'}" stroke-width="2" fill="white"/>
+        </svg>
+      </div>`;
+    card.onclick = () => selectDoctor(card, d, i);
+    list.appendChild(card);
+  });
+  state.doctor = null;
+  document.getElementById('nextBtn2').disabled = true;
+}
+
+function selectDoctor(card, d, idx) {
+  document.querySelectorAll('.doctor-card').forEach(c => {
+    c.classList.remove('selected');
+    c.querySelector('.doc-check').innerHTML = `<svg viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="13" stroke="#e5e7eb" stroke-width="2" fill="white"/></svg>`;
+  });
+  card.classList.add('selected');
+  card.querySelector('.doc-check').innerHTML = `<svg viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="13" fill="#1a7a6b"/><polyline points="8,14 12,18 20,10" stroke="white" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  state.doctor = d;
+  document.getElementById('nextBtn2').disabled = false;
+}
+
+// ── CALENDAR ────────────────────────────────────────────────────────
+function renderCalendar() {
+  const label = MONTHS[calMonth] + ' ' + calYear;
+  document.getElementById('calMonthLabel').textContent = label;
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const container = document.getElementById('calDays');
+  container.innerHTML = '';
+
+  for (let i = 0; i < firstDay; i++) {
+    const empty = document.createElement('div');
+    empty.className = 'cal-day empty';
+    container.appendChild(empty);
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const cell = document.createElement('div');
+    const thisDate = new Date(calYear, calMonth, d);
+    const isToday  = thisDate.toDateString() === today.toDateString();
+    const isPast   = thisDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    cell.className = 'cal-day' + (isToday ? ' today' : '') + (isPast ? ' past' : '');
+    cell.textContent = d;
+    if (!isPast) cell.onclick = () => selectDay(cell, d);
+    container.appendChild(cell);
+  }
+  state.date = null; state.time = null;
+  document.getElementById('timeSection').style.display = 'none';
+  document.getElementById('nextBtn3').disabled = true;
+}
+
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  if (calMonth < 0)  { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+
+function selectDay(cell, day) {
+  document.querySelectorAll('.cal-day').forEach(c => c.classList.remove('selected'));
+  cell.classList.add('selected');
+  const d = new Date(calYear, calMonth, day);
+  const dow = d.getDay();
+  const options = {weekday:'long', year:'numeric', month:'long', day:'numeric'};
+  state.date = d.toLocaleDateString('es-PE', options);
+  state.time = null;
+  renderTimeSlots(dow);
+  document.getElementById('timeSection').style.display = 'block';
+  document.getElementById('nextBtn3').disabled = true;
+}
+
+function renderTimeSlots(dow) {
+  const slots = DAY_SLOTS[dow] || ['9:00 AM','10:00 AM','11:00 AM'];
+  const container = document.getElementById('timeSlots');
+  container.innerHTML = '';
+  slots.forEach(s => {
+    const btn = document.createElement('div');
+    const taken = TAKEN_SLOTS.includes(s);
+    btn.className = 'time-slot' + (taken ? ' taken' : '');
+    btn.textContent = s;
+    if (!taken) btn.onclick = () => selectTime(btn, s);
+    container.appendChild(btn);
+  });
+}
+
+function selectTime(btn, t) {
+  document.querySelectorAll('.time-slot').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.time = t;
+  document.getElementById('nextBtn3').disabled = false;
+}
+
+// ── CONFIRM ─────────────────────────────────────────────────────────
+function renderConfirm() {
+  document.getElementById('cfHeaderTitle').textContent = state.specialty;
+  document.getElementById('cfDoctor').textContent   = state.doctor ? state.doctor.name : '—';
+  document.getElementById('cfDate').textContent     = state.date   || '—';
+  document.getElementById('cfTime').textContent     = state.time   || '—';
+  document.getElementById('cfCenter').textContent   = state.doctor ? state.doctor.center : '—';
+  document.getElementById('cfHeaderSub').textContent = state.doctor ? state.doctor.spec : 'Cita médica';
+}
+
+function confirmAppointment() {
+  const newAppt = {
+    id: Date.now(),
+    docName: state.doctor ? state.doctor.name : 'Dr. Carlos Martínez',
+    spec: state.specialty || 'Medicina General',
+    date: state.date || '25 de junio de 2026',
+    time: state.time || '10:00 AM',
+    status: 'Confirmada',
+    location: state.doctor ? state.doctor.center : 'Centro de Salud Central'
+  };
+  
+  // Persist to Central DB
+  const appts = SaludYaDB.getAppointments() || [];
+  appts.unshift(newAppt);
+  SaludYaDB.saveAppointments(appts);
+
+  document.getElementById('sucDoctor').textContent = newAppt.docName;
+  document.getElementById('sucDate').textContent   = newAppt.date;
+  document.getElementById('sucTime').textContent   = newAppt.time;
+  document.getElementById('successOverlay').classList.add('show');
+}
+
+function closeSuccess() {
+  document.getElementById('successOverlay').classList.remove('show');
+  resetFlow();
+  window.location.href = 'saludya_app.html';
+}
+
+// ── AI MODAL ────────────────────────────────────────────────────────
+const AI_RECS = {
+  'Dolor en el pecho':            { spec:'Cardiología',        msg:'El dolor en el pecho puede indicar un problema cardiovascular. Recomendamos una consulta con Cardiología lo antes posible.' },
+  'Tos persistente':              { spec:'Neumología',         msg:'La tos persistente puede ser síntoma de afecciones respiratorias. Un especialista en Neumología puede ayudarte.' },
+  'Fiebre alta':                  { spec:'Medicina General',   msg:'La fiebre alta requiere evaluación inmediata. Medicina General puede diagnosticar la causa y derivarte si es necesario.' },
+  'Dolor de cabeza':              { spec:'Medicina General',   msg:'El dolor de cabeza frecuente puede tener múltiples causas. Inicia con Medicina General para una evaluación completa.' },
+  'Dolor abdominal':              { spec:'Gastroenterología',  msg:'El dolor abdominal puede estar relacionado con el sistema digestivo. Un gastroenterólogo es el especialista indicado.' },
+  'Ansiedad':                     { spec:'Psicología',         msg:'La ansiedad y el estrés son mejor tratados por un Psicólogo o Psiquiatra. El bienestar mental es tan importante como el físico.' },
+  'Dificultad al respirar':       { spec:'Neumología',         msg:'La dificultad para respirar es un síntoma que no debe ignorarse. Neumología es la especialidad recomendada.' },
+  'Problemas digestivos':         { spec:'Gastroenterología',  msg:'Los problemas digestivos recurrentes necesitan atención de un Gastroenterólogo para un diagnóstico preciso.' },
+  'Irregularidades menstruales':  { spec:'Ginecología',        msg:'Los cambios en el ciclo menstrual deben ser evaluados por un Ginecólogo para descartar condiciones importantes.' },
+  'Fiebre en niños':              { spec:'Pediatría',          msg:'La fiebre en niños requiere atención pediátrica especializada. Un Pediatra podrá evaluarlo de forma adecuada.' },
+};
+
+let selectedSymptoms = [];
+
+function toggleChip(chip, symptom) {
+  chip.classList.toggle('selected');
+  if (chip.classList.contains('selected')) {
+    if (!selectedSymptoms.includes(symptom)) selectedSymptoms.push(symptom);
+  } else {
+    selectedSymptoms = selectedSymptoms.filter(s => s !== symptom);
+  }
+  document.getElementById('aiResult').classList.remove('show');
+}
+
+function analyzeSymptoms() {
+  if (selectedSymptoms.length === 0) return;
+  const first = selectedSymptoms[0];
+  const rec = AI_RECS[first] || { spec:'Medicina General', msg:'Para una evaluación completa te recomendamos comenzar con Medicina General.' };
+  document.getElementById('aiResultText').innerHTML =
+    `<strong>Especialidad recomendada: ${rec.spec}</strong><br><br>${rec.msg}`;
+  document.getElementById('aiResult').classList.add('show');
+  document.getElementById('aiAnalyzeBtn').textContent = '✓ Ir a ' + rec.spec;
+  document.getElementById('aiAnalyzeBtn').onclick = () => {
+    closeAI();
+    // Auto-select the recommended specialty
+    const cards = document.querySelectorAll('.specialty-card');
+    cards.forEach(c => {
+      if (c.dataset.spec === rec.spec) { selectSpec(c); c.scrollIntoView({behavior:'smooth', block:'center'}); }
+    });
+  };
+}
+
+function openAI() {
+  selectedSymptoms = [];
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('aiResult').classList.remove('show');
+  document.getElementById('aiAnalyzeBtn').textContent = 'Analizar síntomas';
+  document.getElementById('aiAnalyzeBtn').onclick = analyzeSymptoms;
+  document.getElementById('aiModal').classList.add('open');
+}
+
+function closeAI() { document.getElementById('aiModal').classList.remove('open'); }
+function closeAIOnBg(e) { if (e.target === document.getElementById('aiModal')) closeAI(); }
+
+// Init calendar
+renderCalendar();
+</script>
+</body>
+</html>

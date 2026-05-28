@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Especialidades - Salud Ya</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.app{background:#f0f2f5;font-family:-apple-system,'SF Pro Display',sans-serif;max-width:1200px;width:100%;margin:0 auto;min-height:100vh;}
+.status-bar{background:#1a56db;padding:14px 20px 8px;display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:600;color:white;}
+.top-header{background:#1a56db;padding:10px 20px 22px;display:flex;align-items:center;justify-content:space-between;}
+.top-header h1{font-size:22px;font-weight:700;color:white;flex:1;text-align:center;}
+.top-header i{font-size:24px;color:white;cursor:pointer;}
+.content{background:#f0f2f5;border-radius:20px 20px 0 0;margin-top:-2px;padding:16px 14px 0;}
+.summary-card{background:white;border-radius:14px;padding:16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.summary-left{display:flex;align-items:center;gap:14px;}
+.summary-icon{width:54px;height:54px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;}
+.summary-text small{font-size:12px;color:#8e8e93;display:block;}
+.summary-text strong{font-size:26px;font-weight:700;color:#1c1c1e;display:block;line-height:1.1;}
+.summary-text span{font-size:12px;color:#8e8e93;}
+.nueva-btn{background:#1a56db;color:white;border:none;border-radius:10px;padding:12px 18px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.section-title{font-size:15px;font-weight:700;color:#1c1c1e;margin-bottom:12px;}
+.spec-list{display:flex;flex-direction:column;gap:10px;padding-bottom:20px;}
+.spec-card{background:white;border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;}
+.spec-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ic-blue{background:#e8f0fe;}
+.ic-purple{background:#f3e8fd;}
+.ic-teal{background:#e0f5f0;}
+.ic-orange{background:#fff3e0;}
+.ic-pink{background:#fde8f0;}
+.ic-lblue{background:#e6f1fb;}
+.ic-amber{background:#fef9e0;}
+.ic-green{background:#e6f4ea;}
+.spec-info{flex:1;min-width:0;}
+.spec-name{font-size:14px;font-weight:700;color:#1c1c1e;margin-bottom:2px;}
+.spec-desc{font-size:11px;color:#8e8e93;line-height:1.4;}
+.spec-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.badge-active{background:#e6f4ea;color:#1a7a34;font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;}
+.menu-dot{font-size:18px;color:#c7c7cc;cursor:pointer;}
+.bottom-nav{background:white;border-top:0.5px solid #e5e5e5;display:flex;justify-content:space-around;padding:10px 0 20px;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;flex:1;}
+.nav-item i{font-size:22px;color:#8e8e93;}
+.nav-item span{font-size:10px;color:#8e8e93;}
+.nav-item.active i,.nav-item.active span{color:#1a73e8;}
+@media(min-width:768px){
+  .spec-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .top-header h1{font-size:26px;}
+  .content{padding:20px 20px 0;}
+  .summary-card{padding:20px;}
+}
+@media(min-width:1024px){
+  .spec-list{grid-template-columns:1fr 1fr 1fr;}
+  .content{padding:24px 24px 0;}
+}
+@media(max-width:480px){
+  .spec-name{font-size:13px;}
+  .spec-desc{font-size:10px;}
+  .spec-icon{width:42px;height:42px;}
+}
+</style>
+</head>
+<body>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<div class="app">
+
+
+
+<div class="top-header">
+  <i class="ti ti-menu-2" aria-hidden="true"></i>
+  <h1>Especialidades</h1>
+  <i class="ti ti-search" aria-hidden="true"></i>
+</div>
+
+<div class="content">
+
+  <div class="summary-card">
+    <div class="summary-left">
+      <div class="summary-icon">
+        <i class="ti ti-stethoscope" style="font-size:26px;color:#1a56db;" aria-hidden="true"></i>
+      </div>
+      <div class="summary-text">
+        <small>Total de especialidades</small>
+        <strong>8</strong>
+        <span>Especialidades registradas</span>
+      </div>
+    </div>
+    <button class="nueva-btn">
+      <i class="ti ti-plus" style="font-size:16px;" aria-hidden="true"></i>
+      Nueva
+    </button>
+  </div>
+
+  <div class="section-title">Lista de especialidades</div>
+
+  <div class="spec-list">
+
+    <div class="spec-card">
+      <div class="spec-icon ic-blue">
+        <i class="ti ti-heart-rate-monitor" style="font-size:24px;color:#1a56db;" aria-hidden="true"></i>
+      </div>
+      <div class="spec-info">
+        <div class="spec-name">Cardiología</div>
+        <div class="spec-desc">Enfermedades del corazón y sistema cardiovascular</div>
+      </div>
+      <div class="spec-right">
+        <span class="badge-active">Activa</span>
+        <span class="menu-dot"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+      </div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-icon ic-purple">
+        <i class="ti ti-brain" style="font-size:24px;color:#8b4fb8;" aria-hidden="true"></i>
+      </div>
+      <div class="spec-info">
+        <div class="spec-name">Neurología</div>
+        <div class="spec-desc">Trastornos del sistema nervioso</div>
+      </div>
+      <div class="spec-right">
+        <span class="badge-active">Activa</span>
+        <span class="menu-dot"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+      </div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-icon ic-teal">
+        <i class="ti ti-bone" style="font-size:24px;color:#0f9e75;" aria-hidden="true"></i>
+      </div>
+      <div class="spec-info">
+        <div class="spec-name">Traumatología</div>
+        <div class="spec-desc">Lesiones y enfermedades del sistema musculoesquelético</div>
+      </div>
+      <div class="spec-right">
+        <span class="badge-active">Activa</span>
+        <span class="menu-dot"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+      </div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-icon ic-orange">
+        <i class="ti ti-mood-kid" style="font-size:24px;color:#e67e00;" aria-hidden="true"></i>
+      </div>
+      <div class="spec-info">
+        <div class="spec-name">Pediatría</div>
+        <div class="spec-desc">Atención médica integral para niños y adolescentes</div>
+      </div>
+      <div class="spec-right">
+        <span class="badge-active">Activa</span>
+        <span class="menu-dot"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+      </div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-icon ic-pink">
+        <i class="ti ti-gender-female" style="font-size:24px;color:#d4537e;" aria-hidden="true"></i>
+      </div>
+      <div class="spec-info">
+        <div class="spec-name">Ginecología</div>
+        <div class="spec-desc">Salud femenina y reproductiva</div>
+      </div>
+      <div class="spec-right">
+        <span class="badge-active">Activa</span>
+        <span class="menu-dot"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+      </div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-icon ic-lblue">
+        <i class="ti ti-eye" style="font-size:24px;color:#1a73e8;" aria-hidden="true"></i>
+      </div>
+      <div class="spec-info">
+        <div class="spec-name">Oftalmología</div>
+        <div class="spec-desc">Enfermedades y cuidados de los ojos</div>
+      </div>
+      <div class="spec-right">
+        <span class="badge-active">Activa</span>
+        <span class="menu-dot"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+      </div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-icon ic-amber">
+        <i class="ti ti-ear" style="font-size:24px;color:#b87a00;" aria-hidden="true"></i>
+      </div>
+      <div class="spec-info">
+        <div class="spec-name">Otorrinolaringología</div>
+        <div class="spec-desc">Trastornos de oído, nariz y garganta</div>
+      </div>
+      <div class="spec-right">
+        <span class="badge-active">Activa</span>
+        <span class="menu-dot"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+      </div>
+    </div>
+
+    <div class="spec-card">
+      <div class="spec-icon ic-green">
+        <i class="ti ti-plant-2" style="font-size:24px;color:#34a853;" aria-hidden="true"></i>
+      </div>
+      <div class="spec-info">
+        <div class="spec-name">Gastroenterología</div>
+        <div class="spec-desc">Enfermedades del sistema digestivo</div>
+      </div>
+      <div class="spec-right">
+        <span class="badge-active">Activa</span>
+        <span class="menu-dot"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item" onclick="window.location.href='panel_control.html'">
+    <i class="ti ti-layout-grid" aria-hidden="true"></i>
+    <span>Inicio</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='salud_ya_doctores.html'">
+    <i class="ti ti-user-circle" aria-hidden="true"></i>
+    <span>Doctores</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='horarios_medicos_app.html'">
+    <i class="ti ti-clipboard-list" aria-hidden="true"></i>
+    <span>Horarios</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='pacientes_app.html'">
+    <i class="ti ti-users" aria-hidden="true"></i>
+    <span>Pacientes</span>
+  </div>
+  <div class="nav-item active">
+    <i class="ti ti-dots" aria-hidden="true"></i>
+    <span>Más</span>
+  </div>
+</div>
+
+</div>
+<script>
+// Back button in top-header
+document.querySelector('.top-header i.ti-menu-2').addEventListener('click', function(){
+  window.location.href = 'panel_control.html';
+});
+</script>
+</body>
+</html>

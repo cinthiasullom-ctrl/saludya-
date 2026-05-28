@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Médicos – Salud Ya</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #C8D8EE;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+  .app-container {
+    width: 100%;
+    max-width: 100%;
+    background: #f5f6fa;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .topbar { background: #fff; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid #eee; }
+  .logo-row { display: flex; align-items: center; gap: 6px; }
+  .logo-txt { font-size: 17px; font-weight: 700; color: #1a2d5a; letter-spacing: -0.3px; }
+  .logo-txt span { color: #00957a; }
+  .ham-btn { width: 32px; height: 32px; display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 4px; cursor: pointer; border-radius: 6px; border: none; background: none; }
+  .ham-btn span { display: block; height: 2px; background: #333; border-radius: 2px; width: 100%; }
+  .ham-btn span:last-child { width: 70%; }
+  .bell-wrap { position: relative; cursor: pointer; }
+  .bell-badge { position: absolute; top: -4px; right: -4px; background: #00c851; color: #fff; font-size: 9px; font-weight: 700; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid #fff; }
+  .screen-body { background: #f5f6fa; padding: 14px 14px 0; flex: 1; }
+  .page-title { font-size: 22px; font-weight: 800; color: #1a2d5a; line-height: 1.1; }
+  .page-sub { font-size: 12px; color: #888; margin-top: 3px; margin-bottom: 12px; }
+  .search-row { display: flex; gap: 8px; margin-bottom: 14px; align-items: center; }
+  .search-box { flex: 1; background: #fff; border: 1px solid #e5e5e5; border-radius: 24px; padding: 9px 14px; display: flex; align-items: center; gap: 8px; }
+  .search-box input { border: none; outline: none; font-size: 13px; color: #333; background: none; width: 100%; }
+  .search-box input::placeholder { color: #bbb; }
+  .filter-btn { width: 40px; height: 40px; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+  .sec-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .sec-title { font-size: 14px; font-weight: 700; color: #1a2d5a; }
+  .ver-todas { font-size: 12px; color: #2979ff; cursor: pointer; font-weight: 500; }
+  .specs-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px; scrollbar-width: none; }
+  .specs-scroll::-webkit-scrollbar { display: none; }
+  .spec-chip { flex-shrink: 0; background: #fff; border: 1px solid #eee; border-radius: 14px; padding: 8px 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; transition: border-color 0.15s, background 0.15s; min-width: 72px; }
+  .spec-chip.active { border-color: #00957a; background: #e8f6f3; }
+  .spec-chip span { font-size: 10.5px; color: #444; text-align: center; font-weight: 500; }
+  .spec-chip.active span { color: #00957a; }
+  .spec-icon { width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .doctors-list { display: flex; flex-direction: column; gap: 10px; padding-bottom: 70px; }
+  .doc-card { background: #fff; border-radius: 16px; border: 0.5px solid #eee; padding: 12px; display: flex; align-items: center; gap: 10px; position: relative; transition: border-color 0.15s; }
+  .doc-card:hover { border-color: #ccc; }
+  .doc-avatar { width: 66px; height: 66px; border-radius: 50%; flex-shrink: 0; object-fit: cover; overflow: hidden; background: #e0e8f0; display: flex; align-items: center; justify-content: center; }
+  .doc-info { flex: 1; min-width: 0; }
+  .doc-name { font-size: 13.5px; font-weight: 700; color: #1a2d5a; margin-bottom: 2px; }
+  .doc-spec { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+  .doc-rating { display: flex; align-items: center; gap: 4px; font-size: 11.5px; color: #555; margin-bottom: 4px; }
+  .doc-avail { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #555; margin-bottom: 6px; }
+  .doc-avail-time { color: #00957a; font-weight: 600; }
+  .btn-agendar { background: #2979ff; color: #fff; border: none; border-radius: 10px; padding: 7px 12px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 0.15s, transform 0.15s; }
+  .btn-agendar:hover { background: #1a5fd4; }
+  .btn-agendar:active { transform: scale(0.97); }
+  .fav-btn { position: absolute; top: 10px; right: 10px; border: none; background: none; cursor: pointer; color: #ccc; font-size: 18px; transition: color 0.15s; }
+  .fav-btn.liked { color: #e74c3c; }
+  .bottom-nav { background: #fff; border-top: 0.5px solid #e5e5e5; display: flex; justify-content: space-around; align-items: center; padding: 8px 0 12px; position: sticky; bottom: 0; }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 8px; border-radius: 10px; transition: background 0.15s; min-width: 52px; }
+  .nav-label { font-size: 10px; font-weight: 500; color: #aaa; }
+  .nav-item.active .nav-label { color: #00957a; font-weight: 700; }
+  .nav-item.active i { color: #00957a; }
+  .nav-item i { color: #aaa; font-size: 20px; }
+  .toast { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); background: #1a2d5a; color: #fff; padding: 7px 16px; border-radius: 20px; font-size: 11.5px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 100; }
+  .toast.show { opacity: 1; }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: flex-end; }
+  .modal-overlay.active { display: flex; }
+  .modal-sheet { background: #fff; border-radius: 20px 20px 0 0; padding: 20px 18px 28px; width: 100%; }
+  .modal-handle { width: 40px; height: 4px; background: #ddd; border-radius: 2px; margin: 0 auto 16px; }
+  .modal-doc-hdr { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
+  .modal-doc-name { font-size: 15px; font-weight: 700; color: #1a2d5a; }
+  .modal-doc-spec { font-size: 12px; font-weight: 600; }
+  .time-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin: 12px 0 16px; }
+  .time-slot { background: #f5f6fa; border: 1px solid #eee; border-radius: 10px; padding: 8px 4px; text-align: center; font-size: 12px; color: #333; cursor: pointer; transition: all 0.15s; }
+  .time-slot:hover, .time-slot.selected { background: #e8f6f3; border-color: #00957a; color: #00957a; font-weight: 600; }
+  .modal-confirm-btn { width: 100%; background: #2979ff; color: #fff; border: none; border-radius: 14px; padding: 13px; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+  .modal-confirm-btn:hover { background: #1a5fd4; }
+  .modal-close-txt { text-align: center; margin-top: 10px; font-size: 12px; color: #00957a; cursor: pointer; }
+  .modal-section-lbl { font-size: 12px; font-weight: 700; color: #1a2d5a; margin-bottom: 6px; }
+
+  @media (min-width: 769px) {
+    .app-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      border-radius: 20px;
+      min-height: calc(100vh - 40px);
+    }
+    body {
+      padding: 20px !important;
+    }
+  }
+  @media (max-width: 768px) {
+    body {
+      padding: 0 !important;
+    }
+    .app-container {
+      max-width: 100% !important;
+      border-radius: 0 !important;
+      min-height: 100vh !important;
+    }
+  }
+  @media (max-width: 320px) {
+    .specs-scroll { gap: 4px; }
+    .spec-chip { min-width: 60px; padding: 6px 8px; }
+  }
+  </style>
+</head>
+<body>
+
+<div class="app-container" id="ph">
+  <div class="topbar">
+    <div class="ham-btn" onclick="showToast('Menú')"><span></span><span></span><span></span></div>
+    <div class="logo-row">
+      <svg width="26" height="26" viewBox="0 0 38 38" fill="none"><circle cx="19" cy="19" r="19" fill="#00957a" opacity="0.12"/><path d="M19 6C15 6 11 9.5 11 14C11 20 19 30 19 30C19 30 27 20 27 14C27 9.5 23 6 19 6Z" fill="#00957a"/><circle cx="19" cy="10" r="3.5" fill="#1a5e8a" opacity="0.7"/><rect x="17" y="13" width="4" height="10" rx="2" fill="white"/><rect x="14" y="16" width="10" height="4" rx="2" fill="white"/></svg>
+      <span class="logo-txt">Salud <span>Ya</span></span>
+    </div>
+    <div class="bell-wrap" onclick="showToast('3 notificaciones nuevas')">
+      <i class="ti ti-bell" style="font-size:22px;color:#333;" aria-hidden="true"></i>
+      <div class="bell-badge">3</div>
+    </div>
+  </div>
+
+  <div class="screen-body">
+    <p class="page-title">Médicos</p>
+    <p class="page-sub">Encuentra al especialista que necesitas</p>
+
+    <div class="search-row">
+      <div class="search-box">
+        <i class="ti ti-search" style="font-size:16px;color:#bbb;" aria-hidden="true"></i>
+        <input type="text" placeholder="Buscar médico o especialidad" id="searchInput" oninput="filterDoctors()" />
+      </div>
+      <div class="filter-btn" onclick="showToast('Filtros avanzados')">
+        <svg width="18" height="14" viewBox="0 0 18 14" fill="none"><path d="M1 1H17M4 7H14M7 13H11" stroke="#555" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+
+    <div class="sec-hdr">
+      <span class="sec-title">Especialidades</span>
+      <span class="ver-todas" onclick="showToast('Ver todas las especialidades')">Ver todas</span>
+    </div>
+
+    <div class="specs-scroll" id="specsRow">
+      <div class="spec-chip active" onclick="filterBySpec('all',this)">
+        <div class="spec-icon" style="background:#fde8e8;">❤️</div>
+        <span>Todos</span>
+      </div>
+      <div class="spec-chip" onclick="filterBySpec('Cardióloga',this)">
+        <div class="spec-icon" style="background:#fde8e8;">🫀</div>
+        <span>Cardiología</span>
+      </div>
+      <div class="spec-chip" onclick="filterBySpec('Pediatra',this)">
+        <div class="spec-icon" style="background:#e3f2fd;">👶</div>
+        <span>Pediatría</span>
+      </div>
+      <div class="spec-chip" onclick="filterBySpec('Odontólogo',this)">
+        <div class="spec-icon" style="background:#ede7f6;">🦷</div>
+        <span>Odontología</span>
+      </div>
+      <div class="spec-chip" onclick="filterBySpec('Psicóloga',this)">
+        <div class="spec-icon" style="background:#e8f5e9;">🧠</div>
+        <span>Psicología</span>
+      </div>
+      <div class="spec-chip" onclick="filterBySpec('Dermatóloga',this)">
+        <div class="spec-icon" style="background:#e8f5e9;">🩺</div>
+        <span>Dermatología</span>
+      </div>
+    </div>
+
+    <div class="sec-hdr">
+      <span class="sec-title">Médicos destacados</span>
+    </div>
+
+    <div class="doctors-list" id="docsList"></div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="setNav(this,'Inicio')">
+      <i class="ti ti-home"></i>
+      <span class="nav-label">Inicio</span>
+    </div>
+    <div class="nav-item active" onclick="setNav(this,'Médicos')">
+      <i class="ti ti-stethoscope" style="color:#00957a;"></i>
+      <span class="nav-label">Médicos</span>
+    </div>
+    <div class="nav-item" onclick="setNav(this,'Medicamentos')">
+      <i class="ti ti-pill"></i>
+      <span class="nav-label">Medicamentos</span>
+    </div>
+    <div class="nav-item" onclick="setNav(this,'Perfil')">
+      <i class="ti ti-user"></i>
+      <span class="nav-label">Perfil</span>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="bookModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-doc-hdr" id="modalDocHdr"></div>
+      <p class="modal-section-lbl">Selecciona un horario</p>
+      <div class="time-grid" id="timeGrid">
+        <div class="time-slot" onclick="selTime(this)">8:00 AM</div>
+        <div class="time-slot" onclick="selTime(this)">9:00 AM</div>
+        <div class="time-slot" onclick="selTime(this)">10:00 AM</div>
+        <div class="time-slot selected" onclick="selTime(this)">2:00 PM</div>
+        <div class="time-slot" onclick="selTime(this)">3:00 PM</div>
+        <div class="time-slot" onclick="selTime(this)">5:00 PM</div>
+      </div>
+      <button class="modal-confirm-btn" onclick="confirmBooking()">Confirmar cita</button>
+      <p class="modal-close-txt" onclick="closeModal()">Cancelar</p>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+</div>
+
+<script src="db.js"></script>
+<script>
+const doctors = [
+  {name:'Dra. Laura Martínez',spec:'Cardióloga',specColor:'#e74c3c',rating:'4.9',reviews:'128',avail:'Disponible hoy',time:'2:00 PM - 6:00 PM',initials:'LM',bg:'#fde8e8',tc:'#c0392b'},
+  {name:'Dr. Carlos Gómez',spec:'Pediatra',specColor:'#2979ff',rating:'4.8',reviews:'96',avail:'Disponible mañana',time:'9:00 AM - 1:00 PM',initials:'CG',bg:'#e3f2fd',tc:'#1565c0'},
+  {name:'Dra. Ana Sánchez',spec:'Dermatóloga',specColor:'#8e44ad',rating:'4.7',reviews:'78',avail:'Disponible el viernes',time:'3:00 PM - 7:00 PM',initials:'AS',bg:'#ede7f6',tc:'#6a1b9a'},
+  {name:'Dra. María López',spec:'Psicóloga',specColor:'#00957a',rating:'4.9',reviews:'112',avail:'Disponible hoy',time:'10:00 AM - 2:00 PM',initials:'ML',bg:'#e8f5e9',tc:'#1b5e20'},
+  {name:'Dr. Jorge Rivas',spec:'Odontólogo',specColor:'#e67e22',rating:'4.6',reviews:'54',avail:'Disponible mañana',time:'8:00 AM - 12:00 PM',initials:'JR',bg:'#fff3e0',tc:'#e65100'},
+];
+
+let liked = {};
+let currentFilter = 'all';
+let currentSearch = '';
+
+function renderDoctors(){
+  const list = document.getElementById('docsList');
+  const q = currentSearch.toLowerCase();
+  const filtered = doctors.filter(d=>{
+    const matchSpec = currentFilter==='all' || d.spec===currentFilter;
+    const matchQ = !q || d.name.toLowerCase().includes(q) || d.spec.toLowerCase().includes(q);
+    return matchSpec && matchQ;
+  });
+  if(!filtered.length){
+    list.innerHTML='<p style="text-align:center;color:#aaa;font-size:13px;padding:24px 0;">No se encontraron médicos</p>';
+    return;
+  }
+  list.innerHTML = filtered.map((d,i)=>`
+    <div class="doc-card">
+      <div class="doc-avatar" style="background:${d.bg};">
+        <span style="font-size:18px;font-weight:700;color:${d.tc};">${d.initials}</span>
+      </div>
+      <div class="doc-info">
+        <p class="doc-name">${d.name}</p>
+        <p class="doc-spec" style="color:${d.specColor};">${d.spec}</p>
+        <div class="doc-rating">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="#f4b400"><path d="M6 1l1.4 2.9L11 4.4 8.5 6.8l.6 3.7L6 9l-3.1 1.5.6-3.7L1 4.4l3.6-.5L6 1z"/></svg>
+          <span>${d.rating} (${d.reviews} reseñas)</span>
+        </div>
+        <div class="doc-avail">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="1.5" stroke="#888" stroke-width="1.2"/><path d="M4 1v2M8 1v2M1 5h10" stroke="#888" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <span>${d.avail} <span class="doc-avail-time">${d.time}</span></span>
+        </div>
+        <button class="btn-agendar" onclick="openBook(${doctors.indexOf(d)})">Agendar cita</button>
+      </div>
+      <button class="fav-btn ${liked[doctors.indexOf(d)]?'liked':''}" onclick="toggleLike(${doctors.indexOf(d)},this)" aria-label="Favorito">
+        <i class="ti ti-heart"></i>
+      </button>
+    </div>
+  `).join('');
+}
+
+function toggleLike(idx,btn){
+  liked[idx]=!liked[idx];
+  btn.classList.toggle('liked',liked[idx]);
+  showToast(liked[idx]?'Añadido a favoritos':'Eliminado de favoritos');
+}
+
+function filterBySpec(spec,el){
+  document.querySelectorAll('.spec-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  currentFilter = spec;
+  renderDoctors();
+}
+
+function filterDoctors(){
+  currentSearch = document.getElementById('searchInput').value;
+  renderDoctors();
+}
+
+let bookingDoc = null;
+function openBook(idx){
+  bookingDoc = doctors[idx];
+  const hdr = document.getElementById('modalDocHdr');
+  hdr.innerHTML=`
+    <div style="width:48px;height:48px;border-radius:50%;background:${bookingDoc.bg};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:${bookingDoc.tc};">${bookingDoc.initials}</div>
+    <div>
+      <p class="modal-doc-name">${bookingDoc.name}</p>
+      <p class="modal-doc-spec" style="color:${bookingDoc.specColor};">${bookingDoc.spec}</p>
+    </div>`;
+  document.getElementById('bookModal').classList.add('active');
+}
+function closeModal(){ document.getElementById('bookModal').classList.remove('active'); }
+function selTime(el){
+  document.querySelectorAll('.time-slot').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function confirmBooking(){
+  const sel = document.querySelector('.time-slot.selected');
+  const time = sel ? sel.textContent : '02:00 PM';
+  closeModal();
+  
+  // Persist to central DB
+  const newAppt = {
+    id: Date.now(),
+    docName: bookingDoc.name,
+    spec: bookingDoc.spec,
+    date: 'Mañana, 22 de mayo de 2026',
+    time: time,
+    status: 'Confirmada',
+    location: 'Consultorio Médico Salud Ya'
+  };
+  const appts = SaludYaDB.getAppointments() || [];
+  appts.unshift(newAppt);
+  SaludYaDB.saveAppointments(appts);
+  
+  showToast('¡Cita registrada con éxito! 📅');
+  setTimeout(() => {
+    window.location.href = 'saludya_app.html';
+  }, 1200);
+}
+
+function setNav(el,label){
+  if(label === 'Inicio') window.location.href = 'saludya_app.html';
+  else if(label === 'Medicamentos') window.location.href = 'salud_ya_medicamentos_screen.html';
+  else if(label === 'Perfil') window.location.href = 'salud_ya_perfil.html';
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+renderDoctors();
+</script>
+</body>
+</html>

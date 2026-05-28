@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configuraciones – Salud Ya</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body {
+  background: #C8D8EE;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+.app {
+  background: #f0f2f5;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: -apple-system, 'SF Pro Display', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 769px) {
+  .app {
+    min-height: calc(100vh - 40px);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+  body { padding: 20px !important; }
+}
+@media (max-width: 768px) {
+  body { padding: 0 !important; }
+  .app { border-radius: 0 !important; }
+}
+.top-header{background:#1a3fa8;padding:10px 20px 22px;display:flex;align-items:center;gap:16px;width:100%;}
+
+.top-header h1{font-size:21px;font-weight:700;color:white;flex:1;}
+.top-header i{font-size:24px;color:white;cursor:pointer;}
+.content{background:#f0f2f5;border-radius:20px 20px 0 0;margin-top:-2px;padding:14px 14px 0;}
+.profile-card{background:white;border-radius:14px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:20px;cursor:pointer;}
+.profile-icon{width:52px;height:52px;border-radius:12px;background:#e8f0fe;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.profile-info{flex:1;}
+.profile-name{font-size:15px;font-weight:700;color:#1c1c1e;}
+.profile-role{font-size:13px;color:#8e8e93;margin-top:2px;}
+.section-label{font-size:14px;font-weight:700;color:#1c1c1e;margin:0 2px 10px;}
+.settings-group{background:white;border-radius:14px;overflow:hidden;margin-bottom:20px;}
+.setting-row{display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:0.5px solid #f0f0f5;cursor:pointer;}
+.setting-row:last-child{border-bottom:none;}
+.set-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.si-blue{background:#e8f0fe;}
+.si-green{background:#e6f4ea;}
+.si-purple{background:#f3e8fd;}
+.si-orange{background:#fff3e0;}
+.set-text{flex:1;min-width:0;}
+.set-name{font-size:14px;font-weight:600;color:#1c1c1e;}
+.set-desc{font-size:11px;color:#8e8e93;margin-top:1px;}
+.set-right{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.set-value{font-size:13px;color:#8e8e93;}
+.bottom-nav{background:white;border-top:0.5px solid #e5e5e5;display:flex;justify-content:space-around;padding:10px 0 20px;position:sticky;bottom:0;width:100%;z-index:10;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;flex:1;}
+.nav-item i{font-size:22px;color:#8e8e93;}
+.nav-item span{font-size:10px;color:#8e8e93;}
+.nav-item.active i,.nav-item.active span{color:#1a73e8;}
+
+/* Modal styles */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.active {
+  display: flex;
+}
+.modal-sheet {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px 20px;
+  width: 90%;
+  max-width: 350px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1c1c1e;
+  margin-bottom: 4px;
+}
+.modal-sub {
+  font-size: 12px;
+  color: #8e8e93;
+  margin-bottom: 16px;
+}
+.field-lbl {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #636366;
+  margin-bottom: 5px;
+  display: block;
+}
+.field-input {
+  width: 100%;
+  border: 1px solid #d1d1d6;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #1c1c1e;
+  outline: none;
+  margin-bottom: 12px;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+.field-input:focus {
+  border-color: #1a3fa8;
+}
+.modal-save-btn {
+  width: 100%;
+  background: #1a3fa8;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.15s;
+}
+.modal-save-btn:hover {
+  background: #153388;
+}
+.modal-cancel-txt {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #1a3fa8;
+  cursor: pointer;
+}
+.logout-btn:hover {
+  background: #fef2f2 !important;
+}
+.toast {
+  position: fixed;
+  bottom: 85px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1c1c1e;
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 200;
+  white-space: nowrap;
+}
+.toast.show {
+  opacity: 1;
+}
+</style>
+</head>
+<body>
+<div class="app">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+
+<div class="top-header">
+  <i class="ti ti-arrow-left" style="cursor:pointer;" onclick="window.location.href='panel_control.html'" aria-hidden="true"></i>
+  <h1>Configuraciones</h1>
+</div>
+
+<div class="content">
+
+  <div class="profile-card" onclick="openClinicModal()">
+    <div class="profile-icon">
+      <i class="ti ti-building-hospital" style="font-size:26px;color:#1a3fa8;" aria-hidden="true"></i>
+    </div>
+    <div class="profile-info">
+      <div class="profile-name" id="clinicNameText">Clínica Salud Total</div>
+      <div class="profile-role">Administrador</div>
+    </div>
+    <i class="ti ti-chevron-right" style="font-size:18px;color:#c7c7cc;" aria-hidden="true"></i>
+  </div>
+
+  <div class="section-label">Preferencias generales</div>
+  <div class="settings-group">
+    <div class="setting-row" onclick="openClinicModal()">
+      <div class="set-icon si-blue"><i class="ti ti-settings" style="font-size:18px;color:#1a3fa8;" aria-hidden="true"></i></div>
+      <div class="set-text">
+        <div class="set-name">Información de la clínica</div>
+        <div class="set-desc">Datos básicos y de contacto</div>
+      </div>
+      <div class="set-right">
+        <i class="ti ti-chevron-right" style="font-size:17px;color:#c7c7cc;" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="setting-row" onclick="openTimezoneModal()">
+      <div class="set-icon si-blue"><i class="ti ti-clock" style="font-size:18px;color:#1a3fa8;" aria-hidden="true"></i></div>
+      <div class="set-text">
+        <div class="set-name">Zona horaria</div>
+        <div class="set-desc">Configura la zona horaria del sistema</div>
+      </div>
+      <div class="set-right">
+        <span class="set-value" id="timezoneText">GMT-05:00</span>
+        <i class="ti ti-chevron-right" style="font-size:17px;color:#c7c7cc;" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="setting-row" onclick="openLanguageModal()">
+      <div class="set-icon si-blue"><i class="ti ti-world" style="font-size:18px;color:#1a3fa8;" aria-hidden="true"></i></div>
+      <div class="set-text">
+        <div class="set-name">Idioma</div>
+        <div class="set-desc">Selecciona el idioma de la aplicación</div>
+      </div>
+      <div class="set-right">
+        <span class="set-value" id="languageText">Español</span>
+        <i class="ti ti-chevron-right" style="font-size:17px;color:#c7c7cc;" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="setting-row">
+      <div class="set-icon si-blue"><i class="ti ti-bell" style="font-size:18px;color:#1a3fa8;" aria-hidden="true"></i></div>
+      <div class="set-text">
+        <div class="set-name">Notificaciones</div>
+        <div class="set-desc">Gestiona tus preferencias de notificaciones</div>
+      </div>
+      <div class="set-right">
+        <i class="ti ti-chevron-right" style="font-size:17px;color:#c7c7cc;" aria-hidden="true"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Configuración del sistema</div>
+  <div class="settings-group">
+    <div class="setting-row">
+      <div class="set-icon si-green"><i class="ti ti-shield-lock" style="font-size:18px;color:#2a8a4a;" aria-hidden="true"></i></div>
+      <div class="set-text">
+        <div class="set-name">Seguridad y acceso</div>
+        <div class="set-desc">Contraseña, sesiones y permisos</div>
+      </div>
+      <div class="set-right">
+        <i class="ti ti-chevron-right" style="font-size:17px;color:#c7c7cc;" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="setting-row">
+      <div class="set-icon si-green"><i class="ti ti-users-group" style="font-size:18px;color:#2a8a4a;" aria-hidden="true"></i></div>
+      <div class="set-text">
+        <div class="set-name">Roles y permisos</div>
+        <div class="set-desc">Gestiona roles de usuarios del sistema</div>
+      </div>
+      <div class="set-right">
+        <i class="ti ti-chevron-right" style="font-size:17px;color:#c7c7cc;" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="setting-row">
+      <div class="set-icon si-green"><i class="ti ti-database" style="font-size:18px;color:#2a8a4a;" aria-hidden="true"></i></div>
+      <div class="set-text">
+        <div class="set-name">Respaldo y datos</div>
+        <div class="set-desc">Copia de seguridad y restauración</div>
+      </div>
+      <div class="set-right">
+        <i class="ti ti-chevron-right" style="font-size:17px;color:#c7c7cc;" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="setting-row">
+      <div class="set-icon si-green"><i class="ti ti-history" style="font-size:18px;color:#2a8a4a;" aria-hidden="true"></i></div>
+      <div class="set-text">
+        <div class="set-name">Registro de actividad</div>
+        <div class="set-desc">Ver historial de acciones en el sistema</div>
+      </div>
+      <div class="set-right">
+        <i class="ti ti-chevron-right" style="font-size:17px;color:#c7c7cc;" aria-hidden="true"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Personalización</div>
+  <div class="settings-group">
+    <div class="setting-row">
+      <div class="set-icon si-purple"><i class="ti ti-palette" style="font-size:18px;color:#8b4fb8;" aria-hidden="true"></i></div>
+      <div class="set-text">
+        <div class="set-name">Apariencia</div>
+        <div class="set-desc">Personaliza colores y tema de la aplicación</div>
+      </div>
+      <div class="set-right">
+        <i class="ti ti-chevron-right" style="font-size:17px;color:#c7c7cc;" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="setting-row">
+      <div class="set-icon si-purple"><i class="ti ti-file-description" style="font-size:18px;color:#8b4fb8;" aria-hidden="true"></i></div>
+      <div class="set-text">
+        <div class="set-name">Plantillas</div>
+        <div class="set-desc">Gestiona plantillas de documentos y recetas</div>
+      </div>
+      <div class="set-right">
+        <i class="ti ti-chevron-right" style="font-size:17px;color:#c7c7cc;" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="setting-row">
+      <div class="set-icon si-purple"><i class="ti ti-mail" style="font-size:18px;color:#8b4fb8;" aria-hidden="true"></i></div>
+      <div class="set-text">
+        <div class="set-name">Mensajes predeterminados</div>
+        <div class="set-desc">Edita mensajes automáticos del sistema</div>
+      </div>
+      <div class="set-right">
+        <i class="ti ti-chevron-right" style="font-size:17px;color:#c7c7cc;" aria-hidden="true"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Soporte</div>
+  <div class="settings-group" style="margin-bottom:20px;">
+    <div class="setting-row">
+      <div class="set-icon si-orange"><i class="ti ti-help-circle" style="font-size:18px;color:#c67a00;" aria-hidden="true"></i></div>
+      <div class="set-text">
+        <div class="set-name">Centro de ayuda</div>
+        <div class="set-desc">Guías, preguntas frecuentes y soporte</div>
+      </div>
+      <div class="set-right">
+        <i class="ti ti-chevron-right" style="font-size:17px;color:#c7c7cc;" aria-hidden="true"></i>
+      </div>
+    </div>
+  </div>
+
+  <button class="logout-btn" onclick="handleLogout()" style="background:#fff; border:1.5px solid #fdd; border-radius:14px; width:100%; padding:15px; margin-bottom:24px; display:flex; align-items:center; justify-content:center; gap:8px; font-size:15px; font-weight:600; color:#ef4444; cursor:pointer; transition:background .15s; outline:none;">
+    <i class="ti ti-logout" style="font-size:18px;" aria-hidden="true"></i>
+    Cerrar sesión
+  </button>
+
+</div>
+
+<!-- CLINIC INFO MODAL -->
+<div class="modal-overlay" id="clinicModal">
+  <div class="modal-sheet">
+    <div class="modal-title">Información de la clínica</div>
+    <div class="modal-sub">Actualiza los datos básicos de tu centro médico</div>
+    <label class="field-lbl">Nombre de la clínica</label>
+    <input class="field-input" type="text" id="inputClinicName" placeholder="Ej: Clínica Salud Total"/>
+    <button class="modal-save-btn" onclick="saveClinicName()">Guardar cambios</button>
+    <p class="modal-cancel-txt" onclick="closeClinicModal()">Cancelar</p>
+  </div>
+</div>
+
+<!-- TIMEZONE MODAL -->
+<div class="modal-overlay" id="timezoneModal">
+  <div class="modal-sheet">
+    <div class="modal-title">Zona horaria</div>
+    <div class="modal-sub">Selecciona la zona horaria para agendados</div>
+    <label class="field-lbl">Zona horaria del sistema</label>
+    <select class="field-input" id="selectTimezone">
+      <option value="GMT-06:00">GMT-06:00 (CDMX / América Central)</option>
+      <option value="GMT-05:00" selected>GMT-05:00 (Lima / Bogotá / Quito)</option>
+      <option value="GMT-04:00">GMT-04:00 (Santiago / La Paz)</option>
+      <option value="GMT-03:00">GMT-03:00 (Buenos Aires / São Paulo)</option>
+    </select>
+    <button class="modal-save-btn" onclick="saveTimezone()">Guardar cambios</button>
+    <p class="modal-cancel-txt" onclick="closeTimezoneModal()">Cancelar</p>
+  </div>
+</div>
+
+<!-- LANGUAGE MODAL -->
+<div class="modal-overlay" id="languageModal">
+  <div class="modal-sheet">
+    <div class="modal-title">Idioma</div>
+    <div class="modal-sub">Elige el idioma del panel administrativo</div>
+    <label class="field-lbl">Idioma</label>
+    <select class="field-input" id="selectLanguage">
+      <option value="Español" selected>Español</option>
+      <option value="English">English</option>
+      <option value="Português">Português</option>
+    </select>
+    <button class="modal-save-btn" onclick="saveLanguage()">Guardar cambios</button>
+    <p class="modal-cancel-txt" onclick="closeLanguageModal()">Cancelar</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="bottom-nav">
+  <div class="nav-item" onclick="window.location.href='panel_control.html'">
+    <i class="ti ti-home" aria-hidden="true"></i>
+    <span>Inicio</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='salud_ya_doctores.html'">
+    <i class="ti ti-user-circle" aria-hidden="true"></i>
+    <span>Doctores</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='horarios_medicos_app.html'">
+    <i class="ti ti-calendar" aria-hidden="true"></i>
+    <span>Horarios</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='reportes_app.html'">
+    <i class="ti ti-clipboard-list" aria-hidden="true"></i>
+    <span>Reportes</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='pacientes_app.html'">
+    <i class="ti ti-user" aria-hidden="true"></i>
+    <span>Pacientes</span>
+  </div>
+  <div class="nav-item active" onclick="window.location.href='configuraciones_app.html'">
+    <i class="ti ti-dots" aria-hidden="true"></i>
+    <span>Más</span>
+  </div>
+</div>
+
+</div>
+<script src="db.js"></script>
+<script>
+let configs = {
+  clinicName: "Clínica Salud Total",
+  timezone: "GMT-05:00",
+  language: "Español",
+  darkMode: false,
+  enableTelemedicine: true,
+  notificationsEnabled: true
+};
+
+function loadConfigs() {
+  if (typeof SaludYaDB !== 'undefined') {
+    configs = SaludYaDB.getConfigs() || configs;
+  }
+  document.getElementById('clinicNameText').textContent = configs.clinicName;
+  document.getElementById('timezoneText').textContent = configs.timezone;
+  document.getElementById('languageText').textContent = configs.language;
+}
+
+function saveConfigs() {
+  if (typeof SaludYaDB !== 'undefined') {
+    SaludYaDB.saveConfigs(configs);
+  }
+}
+
+function openClinicModal() {
+  document.getElementById('inputClinicName').value = configs.clinicName;
+  document.getElementById('clinicModal').classList.add('active');
+}
+function closeClinicModal() {
+  document.getElementById('clinicModal').classList.remove('active');
+}
+function saveClinicName() {
+  const name = document.getElementById('inputClinicName').value.trim();
+  if (!name) { showToast('El nombre no puede estar vacío.'); return; }
+  configs.clinicName = name;
+  saveConfigs();
+  loadConfigs();
+  closeClinicModal();
+  showToast('✓ Nombre de la clínica actualizado');
+}
+
+function openTimezoneModal() {
+  document.getElementById('selectTimezone').value = configs.timezone;
+  document.getElementById('timezoneModal').classList.add('active');
+}
+function closeTimezoneModal() {
+  document.getElementById('timezoneModal').classList.remove('active');
+}
+function saveTimezone() {
+  configs.timezone = document.getElementById('selectTimezone').value;
+  saveConfigs();
+  loadConfigs();
+  closeTimezoneModal();
+  showToast('✓ Zona horaria actualizada');
+}
+
+function openLanguageModal() {
+  document.getElementById('selectLanguage').value = configs.language;
+  document.getElementById('languageModal').classList.add('active');
+}
+function closeLanguageModal() {
+  document.getElementById('languageModal').classList.remove('active');
+}
+function saveLanguage() {
+  configs.language = document.getElementById('selectLanguage').value;
+  saveConfigs();
+  loadConfigs();
+  closeLanguageModal();
+  showToast('✓ Idioma actualizado');
+}
+
+function handleLogout() {
+  if (typeof SaludYaDB !== 'undefined') {
+    SaludYaDB.logout();
+  } else {
+    window.location.href = 'salud_ya_welcome_screen.html';
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// Close modal on click outside
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) {
+      this.classList.remove('active');
+    }
+  });
+});
+
+document.querySelectorAll('.setting-row, .profile-card').forEach(r => {
+  r.addEventListener('mouseenter', function(){ this.style.background='#fafafa'; });
+  r.addEventListener('mouseleave', function(){ this.style.background=''; });
+});
+
+loadConfigs();
+</script>
+</body>
+</html>

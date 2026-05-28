@@ -1,0 +1,190 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.app {
+  background: linear-gradient(180deg, #eef2fb 0%, #f5f7ff 60%, #e8edf8 100%);
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: -apple-system, 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.blob { position: absolute; border-radius: 50%; background: #dce7f8; opacity: 0.55; }
+.blob-tl { width: 110px; height: 110px; top: 28px; left: -38px; }
+.blob-tr { width: 90px; height: 90px; top: 18px; right: -28px; }
+.blob-bl { width: 130px; height: 130px; bottom: -40px; left: -40px; }
+.blob-br { width: 80px; height: 80px; bottom: 60px; right: -24px; }
+
+.inner { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; padding: 48px 28px 32px; flex: 1; }
+
+.logo-circle { width: 96px; height: 96px; border-radius: 50%; background: #dce9fb; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; }
+.logo-circle svg { width: 52px; height: 52px; }
+
+.main-title { font-size: 28px; font-weight: 800; color: #0d1b3e; text-align: center; letter-spacing: -0.5px; }
+.main-sub { font-size: 14px; color: #5a6a85; text-align: center; margin-top: 8px; line-height: 1.55; max-width: 260px; }
+
+.form { width: 100%; margin-top: 30px; }
+.field-label { font-size: 14px; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; display: block; }
+.input-wrap { position: relative; margin-bottom: 20px; }
+.input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 18px; color: #a0aec0; pointer-events: none; }
+.field-input {
+  width: 100%; padding: 14px 44px 14px 44px;
+  border: 1.5px solid #dde3f0; border-radius: 12px;
+  font-size: 14px; color: #1a1a2e; background: #fff;
+  outline: none; transition: border-color 0.2s;
+}
+.field-input::placeholder { color: #b0bac9; }
+.field-input:focus { border-color: #2563eb; }
+.eye-btn { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 18px; color: #a0aec0; cursor: pointer; padding: 0; }
+
+.row-mid { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
+.remember { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.checkbox-wrap { width: 20px; height: 20px; border-radius: 5px; background: #2563eb; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.checkbox-wrap i { font-size: 13px; color: #fff; }
+.remember-text { font-size: 14px; color: #1a1a2e; font-weight: 500; }
+.forgot { font-size: 13px; color: #2563eb; font-weight: 600; cursor: pointer; text-decoration: none; }
+
+.btn-primary {
+  width: 100%; padding: 16px;
+  background: #2563eb; color: #fff;
+  border: none; border-radius: 14px;
+  font-size: 16px; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.2px;
+  transition: background 0.18s, transform 0.1s;
+}
+.btn-primary:hover { background: #1d4ed8; }
+.btn-primary:active { transform: scale(0.98); }
+
+.divider { display: flex; align-items: center; gap: 12px; margin: 22px 0; width: 100%; }
+.divider-line { flex: 1; height: 1px; background: #dde3f0; }
+.divider-text { font-size: 13px; color: #8a9ab5; white-space: nowrap; }
+
+.btn-google {
+  width: 100%; padding: 14px;
+  background: #fff; color: #1a1a2e;
+  border: 1.5px solid #dde3f0; border-radius: 14px;
+  font-size: 15px; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: border-color 0.18s, background 0.15s;
+}
+.btn-google:hover { background: #f7f9fc; border-color: #b0bac9; }
+.g-logo { width: 22px; height: 22px; }
+
+.footer-note { display: flex; align-items: center; gap: 7px; margin-top: 28px; }
+.footer-note i { font-size: 15px; color: #8a9ab5; }
+.footer-note span { font-size: 12px; color: #8a9ab5; }
+</style>
+
+<div class="app">
+  <div class="blob blob-tl"></div>
+  <div class="blob blob-tr"></div>
+  <div class="blob blob-bl"></div>
+  <div class="blob blob-br"></div>
+
+  <div class="inner">
+    <div class="logo-circle" style="cursor: pointer;" onclick="window.location.href='salud_ya_welcome_screen.html'">
+      <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M26 4L8 12v12c0 11 7.8 20.8 18 24 10.2-3.2 18-13 18-24V12L26 4z" stroke="#2563eb" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+        <path d="M22 22h8M26 18v8" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="34" cy="34" r="9" fill="#eef2fb" stroke="none"/>
+        <path d="M31 34a3 3 0 106 0 3 3 0 00-6 0z" fill="#2563eb"/>
+        <path d="M34 28v2M34 38v2M28 34h2M38 34h2" stroke="#2563eb" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div class="main-title">Administrador</div>
+    <div class="main-sub">Inicia sesión para acceder al panel de administración</div>
+
+    <div class="form">
+      <label class="field-label" for="email">Correo electrónico</label>
+      <div class="input-wrap">
+        <i class="ti ti-mail input-icon" aria-hidden="true"></i>
+        <input class="field-input" id="email" type="email" placeholder="admin@saludya.com" value="admin@saludya.com" autocomplete="email">
+      </div>
+
+      <label class="field-label" for="password">Contraseña</label>
+      <div class="input-wrap">
+        <i class="ti ti-lock input-icon" aria-hidden="true"></i>
+        <input class="field-input" id="password" type="password" placeholder="Ingresa tu contraseña" value="admin123" autocomplete="current-password">
+        <button class="eye-btn" id="eyeBtn" type="button" onclick="togglePass()" aria-label="Mostrar contraseña">
+          <i class="ti ti-eye" id="eyeIcon" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="row-mid">
+        <div class="remember" onclick="toggleCheck()">
+          <div class="checkbox-wrap" id="checkBox">
+            <i class="ti ti-check" id="checkIcon" aria-hidden="true"></i>
+          </div>
+          <span class="remember-text">Recordarme</span>
+        </div>
+        <a class="forgot" href="#">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <button class="btn-primary" type="button" onclick="submitAdminLogin()">Iniciar sesión</button>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">o continúa con</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <button class="btn-google" type="button" onclick="submitAdminLogin()">
+        <svg class="g-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continuar con Google
+      </button>
+    </div>
+
+    <div class="footer-note">
+      <i class="ti ti-shield-check" aria-hidden="true"></i>
+      <span>Acceso exclusivo para administradores autorizados</span>
+    </div>
+  </div>
+  
+  <div class="toast" id="toast" style="position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); background: #0d1b3e; color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 12px; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 100;"></div>
+</div>
+
+<script src="db.js"></script>
+<script>
+function togglePass() {
+  const inp = document.getElementById('password');
+  const ico = document.getElementById('eyeIcon');
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    ico.className = 'ti ti-eye-off';
+  } else {
+    inp.type = 'password';
+    ico.className = 'ti ti-eye';
+  }
+}
+let checked = true;
+function toggleCheck() {
+  checked = !checked;
+  const box = document.getElementById('checkBox');
+  const ico = document.getElementById('checkIcon');
+  box.style.background = checked ? '#2563eb' : '#fff';
+  box.style.border = checked ? 'none' : '1.5px solid #dde3f0';
+  ico.style.display = checked ? 'block' : 'none';
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity = 1;
+  setTimeout(() => t.style.opacity = 0, 2200);
+}
+function submitAdminLogin() {
+  showToast('Iniciando sesión administrativa... 🔐');
+  setTimeout(() => {
+    window.location.href = 'panel_control.html';
+  }, 1200);
+}
+</script>

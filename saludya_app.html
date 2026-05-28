@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Salud Ya</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --blue: #4A90D9;
+    --blue-light: #EBF4FF;
+    --blue-mid: #6BAEE8;
+    --green: #2ECC87;
+    --green-light: #E8FAF3;
+    --purple: #9B6DD6;
+    --purple-light: #F3EDFD;
+    --pink: #F06292;
+    --pink-light: #FDE8F0;
+    --orange: #F5A623;
+    --orange-light: #FEF4E3;
+    --text-dark: #1A2340;
+    --text-mid: #5A6478;
+    --text-light: #9AA3B5;
+    --border: #E8ECF4;
+    --bg: #F5F7FC;
+    --white: #FFFFFF;
+    --red: #E53935;
+  }
+
+  body {
+    background: #C8D8EE;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    padding: 20px;
+  }
+
+  .app-container {
+    width: 100%;
+    max-width: 100%;
+    height: 100vh;
+    background: var(--white);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Status bar */
+  .status-bar {
+    background: var(--white);
+    padding: 12px 28px 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .status-bar .time { font-size: 15px; font-weight: 700; color: var(--text-dark); }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+  .status-icons svg { width: 16px; height: 16px; fill: var(--text-dark); }
+
+  /* Notch */
+  .notch {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 130px; height: 30px;
+    background: #1a1a2e;
+    border-radius: 0 0 22px 22px;
+    z-index: 10;
+  }
+
+  /* Scrollable content */
+  .scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    background: var(--bg);
+  }
+  .scroll-area::-webkit-scrollbar { display: none; }
+
+  /* Top nav */
+  .top-nav {
+    background: var(--white);
+    padding: 10px 20px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .hamburger { display: flex; flex-direction: column; gap: 4px; cursor: pointer; }
+  .hamburger span { width: 22px; height: 2.5px; background: var(--text-dark); border-radius: 2px; }
+  .logo { display: flex; align-items: center; gap: 6px; }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #4A90D9, #2ECC87);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .logo-icon::before {
+    content: '♥';
+    color: white;
+    font-size: 16px;
+  }
+  .logo-cross {
+    position: absolute;
+    width: 14px; height: 14px;
+    background: var(--green);
+    border-radius: 2px;
+    bottom: -2px; right: -2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: white; font-weight: 900;
+  }
+  .logo-text { font-size: 20px; font-weight: 800; color: var(--text-dark); }
+  .logo-text span { color: var(--blue); }
+  .notif-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: none;
+    cursor: pointer;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .notif-badge {
+    position: absolute;
+    top: -2px; right: -2px;
+    width: 18px; height: 18px;
+    background: var(--blue);
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid white;
+  }
+
+  /* Content padding */
+  .content { padding: 16px 16px 0; }
+
+  /* Greeting */
+  .greeting { margin-bottom: 16px; }
+  .greeting h2 { font-size: 22px; font-weight: 800; color: var(--text-dark); }
+  .greeting p { font-size: 13px; color: var(--text-mid); margin-top: 2px; }
+
+  /* Search */
+  .search-bar {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 11px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .search-bar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    color: var(--text-mid);
+    background: transparent;
+  }
+  .filter-btn {
+    width: 34px; height: 34px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+  }
+
+  /* Banner */
+  .banner {
+    background: linear-gradient(135deg, #5B9FE8 0%, #7EC4F0 60%, #A8D8F8 100%);
+    border-radius: 20px;
+    padding: 20px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+    min-height: 130px;
+  }
+  .banner::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: 80px;
+    width: 150px; height: 150px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+  }
+  .banner-text { flex: 1; z-index: 1; }
+  .banner-text p { font-size: 12px; color: rgba(255,255,255,0.85); font-weight: 500; margin-bottom: 2px; }
+  .banner-text h3 { font-size: 20px; font-weight: 800; color: white; line-height: 1.2; margin-bottom: 4px; }
+  .banner-text small { font-size: 11px; color: rgba(255,255,255,0.8); display: block; margin-bottom: 12px; }
+  .banner-btn {
+    background: white;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--blue);
+    cursor: pointer;
+    display: inline-block;
+  }
+  .banner-img {
+    width: 110px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 1;
+  }
+  .doctor-figure {
+    width: 95px;
+    height: 115px;
+    position: relative;
+  }
+  /* SVG doctor illustration */
+
+  /* Section header */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .section-header h3 { font-size: 16px; font-weight: 800; color: var(--text-dark); }
+  .section-header a { font-size: 13px; font-weight: 700; color: var(--blue); text-decoration: none; }
+
+  /* Quick access */
+  .quick-access { margin-bottom: 22px; }
+  .quick-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .quick-item {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    background: var(--white);
+    border-radius: 16px;
+    padding: 12px 4px;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .quick-item:active { transform: scale(0.95); }
+  .quick-icon {
+    width: 44px; height: 44px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .quick-icon.blue { background: var(--blue-light); }
+  .quick-icon.green { background: var(--green-light); }
+  .quick-icon.purple { background: var(--purple-light); }
+  .quick-icon.pink { background: var(--pink-light); }
+  .quick-icon.orange { background: var(--orange-light); }
+  .quick-item span { font-size: 10px; font-weight: 600; color: var(--text-mid); text-align: center; line-height: 1.3; }
+
+  /* Appointment */
+  .appointment { margin-bottom: 22px; }
+  .appt-card {
+    background: var(--white);
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+  }
+  .appt-main {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .doctor-avatar {
+    width: 58px; height: 58px;
+    border-radius: 16px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #E8F0FA;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .appt-info { flex: 1; }
+  .appt-info h4 { font-size: 15px; font-weight: 800; color: var(--text-dark); }
+  .appt-info .specialty { font-size: 12px; color: var(--blue); font-weight: 600; margin-bottom: 8px; }
+  .appt-meta { display: flex; flex-direction: column; gap: 3px; }
+  .appt-meta span { font-size: 11.5px; color: var(--text-mid); display: flex; align-items: center; gap: 5px; }
+  .status-badge {
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+  .chevron { color: var(--text-light); font-size: 18px; flex-shrink: 0; }
+  .appt-footer {
+    border-top: 1.5px solid var(--border);
+    padding: 11px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .appt-footer span { font-size: 13px; font-weight: 700; color: var(--green); }
+
+  /* Health summary */
+  .health-summary { margin-bottom: 22px; }
+  .health-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .health-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 12px 10px;
+    border: 1.5px solid var(--border);
+  }
+  .health-icon-wrap {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 8px;
+  }
+  .health-icon-wrap.red { background: #FDECEA; }
+  .health-icon-wrap.blue { background: var(--blue-light); }
+  .health-icon-wrap.teal { background: #E0F7F2; }
+  .health-label { font-size: 10px; color: var(--text-mid); font-weight: 600; margin-bottom: 3px; }
+  .health-value { font-size: 20px; font-weight: 800; color: var(--text-dark); line-height: 1; }
+  .health-value span { font-size: 11px; font-weight: 600; color: var(--text-mid); }
+  .health-status { font-size: 10px; color: var(--text-mid); margin-top: 4px; }
+
+  /* Tips */
+  .tips { margin-bottom: 22px; }
+  .tip-card {
+    background: var(--white);
+    border-radius: 18px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1.5px solid var(--border);
+    margin-bottom: 10px;
+  }
+  .tip-img {
+    width: 68px; height: 68px;
+    border-radius: 14px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #B3D9F8, #80C4F0);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tip-text h4 { font-size: 14px; font-weight: 800; color: var(--text-dark); margin-bottom: 4px; }
+  .tip-text p { font-size: 11.5px; color: var(--text-mid); line-height: 1.4; }
+  .tip-chevron { margin-left: auto; color: var(--text-light); font-size: 16px; flex-shrink: 0; }
+
+  /* Dots */
+  .dots {
+    display: flex; justify-content: center; gap: 6px; margin-bottom: 22px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+  .dot.active { background: var(--blue); width: 20px; border-radius: 4px; }
+
+  /* Bottom nav */
+  .bottom-nav {
+    background: var(--white);
+    border-top: 1.5px solid var(--border);
+    display: flex;
+    padding: 8px 0 16px;
+    flex-shrink: 0;
+  }
+  .nav-item {
+    flex: 1;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer;
+    padding: 4px 0;
+  }
+  .nav-item span { font-size: 10px; font-weight: 600; color: var(--text-light); }
+  .nav-item.active span { color: var(--blue); }
+  .nav-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; }
+
+  /* Details Modal Styles */
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+  }
+  .detail-label {
+    color: var(--text-mid);
+    font-weight: 600;
+  }
+  .detail-value {
+    color: var(--text-dark);
+    font-weight: 700;
+    text-align: right;
+  }
+  .modal-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px 20px;
+    width: 88%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+  .modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+    text-align: center;
+  }
+  .modal-sub {
+    font-size: 12px;
+    color: var(--text-mid);
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .modal-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 30px;
+    border: none;
+    background: var(--blue);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 14px;
+    transition: background 0.18s;
+  }
+  .modal-btn:hover { background: var(--blue-mid); }
+
+  /* SVG icons */
+  svg { display: block; }
+
+  @media (min-width: 769px) {
+    .app-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      border-radius: 20px;
+      height: calc(100vh - 40px);
+    }
+    body {
+      padding: 20px !important;
+    }
+  }
+  @media (max-width: 768px) {
+    body {
+      padding: 0 !important;
+    }
+    .app-container {
+      max-width: 100% !important;
+      border-radius: 0 !important;
+      height: 100vh !important;
+    }
+  }
+  @media (max-width: 345px) {
+    .health-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 320px) {
+    .quick-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 240px) {
+    .quick-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-container" id="appContainer">
+  <!-- Scrollable Content -->
+  <div class="scroll-area">
+
+    <!-- Top Nav -->
+    <div class="top-nav">
+      <div class="hamburger">
+        <span></span><span></span><span></span>
+      </div>
+
+      <div class="logo">
+        <div class="logo-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="position:relative;z-index:1">
+            <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z" fill="white"/>
+          </svg>
+          <div style="position:absolute;bottom:0;right:-1px;width:14px;height:14px;background:#2ECC87;border-radius:4px;display:flex;align-items:center;justify-content:center;border:1.5px solid white">
+            <svg width="9" height="9" viewBox="0 0 10 10" fill="white"><path d="M5 1v8M1 5h8" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+        <span class="logo-text"><span>Salud</span> Ya</span>
+      </div>
+
+      <button class="notif-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A2340" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
+        </svg>
+        <div class="notif-badge">3</div>
+      </button>
+    </div>
+
+    <div class="content">
+
+      <!-- Greeting -->
+      <div class="greeting">
+        <h2 id="greetingText">¡Hola, María! 👋</h2>
+        <p>¿Cómo podemos ayudarte hoy?</p>
+      </div>
+
+      <!-- Search -->
+      <div class="search-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA3B5" stroke-width="2.5" stroke-linecap="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" placeholder="Buscar médicos, medicamentos, síntomas...">
+        <div class="filter-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5A6478" stroke-width="2.5" stroke-linecap="round">
+            <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="16" y2="12"/><line x1="4" y1="18" x2="12" y2="18"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Banner -->
+      <div class="banner">
+        <div class="banner-text">
+          <p>Consulta con médicos</p>
+          <h3>desde donde<br>estés</h3>
+          <small>Agenda tu cita de forma rápida<br>y segura.</small>
+          <button class="banner-btn">Agendar cita</button>
+        </div>
+        <div class="banner-img">
+          <!-- Doctor illustration SVG -->
+          <svg width="100" height="120" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Body/coat -->
+            <rect x="22" y="55" width="56" height="60" rx="8" fill="white" opacity="0.95"/>
+            <!-- Collar/shirt details -->
+            <rect x="38" y="55" width="24" height="30" rx="4" fill="#E8F4FF" opacity="0.8"/>
+            <!-- Stethoscope -->
+            <circle cx="38" cy="75" r="5" fill="none" stroke="#5B9FE8" stroke-width="2"/>
+            <path d="M43 75 Q55 70 55 82" stroke="#5B9FE8" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <circle cx="55" cy="84" r="3" fill="#5B9FE8"/>
+            <!-- Head -->
+            <circle cx="50" cy="32" r="20" fill="#FDDAB4"/>
+            <!-- Hair -->
+            <path d="M30 28 Q30 10 50 10 Q70 10 70 28" fill="#2C1810"/>
+            <path d="M30 28 Q28 35 32 38" fill="#2C1810"/>
+            <!-- Eyes -->
+            <ellipse cx="43" cy="32" rx="2.5" ry="3" fill="#3D2B1F"/>
+            <ellipse cx="57" cy="32" rx="2.5" ry="3" fill="#3D2B1F"/>
+            <!-- Smile -->
+            <path d="M44 39 Q50 44 56 39" stroke="#D4845A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <!-- Cheeks -->
+            <circle cx="40" cy="37" r="4" fill="#F0A0A0" opacity="0.4"/>
+            <circle cx="60" cy="37" r="4" fill="#F0A0A0" opacity="0.4"/>
+            <!-- Arms -->
+            <rect x="10" y="58" width="14" height="35" rx="7" fill="white" opacity="0.95"/>
+            <rect x="76" y="58" width="14" height="35" rx="7" fill="white" opacity="0.95"/>
+            <!-- Wave hand -->
+            <g transform="translate(76, 50) rotate(-20)">
+              <rect x="0" y="0" width="14" height="28" rx="7" fill="#FDDAB4"/>
+              <rect x="2" y="-4" width="4" height="10" rx="2" fill="#FDDAB4"/>
+              <rect x="7" y="-5" width="4" height="10" rx="2" fill="#FDDAB4"/>
+            </g>
+            <!-- Chat bubble -->
+            <rect x="62" y="8" width="34" height="24" rx="8" fill="white" opacity="0.9"/>
+            <circle cx="71" cy="20" r="2.5" fill="#C0C8D8"/>
+            <circle cx="79" cy="20" r="2.5" fill="#C0C8D8"/>
+            <circle cx="87" cy="20" r="2.5" fill="#C0C8D8"/>
+            <path d="M70 32 L75 38 L80 32" fill="white" opacity="0.9"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Quick Access -->
+      <div class="quick-access">
+        <div class="section-header">
+          <h3>Accesos rápidos</h3>
+          <a href="#">Ver todos</a>
+        </div>
+        <div class="quick-grid">
+          <div class="quick-item">
+            <div class="quick-icon blue">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4A90D9" stroke-width="2" stroke-linecap="round">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <span>Médicos</span>
+          </div>
+          <div class="quick-item">
+            <div class="quick-icon green">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2ECC87" stroke-width="2" stroke-linecap="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 002 8.5c0 2.3 1.5 4.05 3 5.5l7 7 7-7z"/>
+              </svg>
+            </div>
+            <span>Medicamentos</span>
+          </div>
+          <div class="quick-item">
+            <div class="quick-icon purple">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9B6DD6" stroke-width="2" stroke-linecap="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+            </div>
+            <span style="font-size:9.5px">Centros de salud</span>
+          </div>
+          <div class="quick-item">
+            <div class="quick-icon pink">
+              <div style="width:22px;height:22px;background:#F06292;border-radius:6px;display:flex;align-items:center;justify-content:center">
+                <span style="font-size:10px;font-weight:800;color:white">IA</span>
+              </div>
+            </div>
+            <span style="font-size:9.5px">Asistente de IA</span>
+          </div>
+          <div class="quick-item">
+            <div class="quick-icon orange">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F5A623" stroke-width="2" stroke-linecap="round">
+                <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+                <line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/>
+              </svg>
+            </div>
+            <span style="font-size:9.5px">Historia médica</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointment -->
+      <div class="appointment">
+        <div class="section-header">
+          <h3>Tu próxima cita</h3>
+        </div>
+        <div id="upcomingApptContainer">
+          <!-- Renders dynamically from db.js state -->
+        </div>
+      </div>
+
+      <!-- Health Summary -->
+      <div class="health-summary">
+        <div class="section-header">
+          <h3>Resumen de salud</h3>
+          <a href="#">Ver más</a>
+        </div>
+        <div class="health-grid">
+          <div class="health-card">
+            <div class="health-icon-wrap red">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#E53935">
+                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+              </svg>
+            </div>
+            <div class="health-label">Frecuencia cardíaca</div>
+            <div class="health-value">72 <span>lpm</span></div>
+            <div class="health-status">Normal</div>
+          </div>
+          <div class="health-card">
+            <div class="health-icon-wrap blue">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A90D9" stroke-width="2" stroke-linecap="round">
+                <rect x="5" y="2" width="14" height="20" rx="3"/>
+                <line x1="9" y1="7" x2="15" y2="7"/>
+                <line x1="9" y1="12" x2="15" y2="12"/>
+              </svg>
+            </div>
+            <div class="health-label">Peso</div>
+            <div class="health-value">68 <span>kg</span></div>
+            <div class="health-status">Normal</div>
+          </div>
+          <div class="health-card">
+            <div class="health-icon-wrap teal">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2ECC87" stroke-width="2" stroke-linecap="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M8 12 Q10 8 12 12 Q14 16 16 12"/>
+              </svg>
+            </div>
+            <div class="health-label">Presión arterial</div>
+            <div class="health-value" style="font-size:16px;color:#2ECC87">120/80 <span>mmHg</span></div>
+            <div class="health-status">Normal</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div class="tips">
+        <div class="section-header">
+          <h3>Consejos para ti</h3>
+        </div>
+        <div class="tip-card">
+          <div class="tip-img">
+            <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+              <!-- girl drinking water -->
+              <circle cx="30" cy="18" r="12" fill="#FDDAB4"/>
+              <path d="M20 15 Q20 6 30 6 Q40 6 40 15" fill="#4A90D9"/>
+              <!-- body -->
+              <rect x="16" y="30" width="28" height="28" rx="6" fill="#5B9FE8"/>
+              <!-- arm holding bottle -->
+              <rect x="38" y="32" width="10" height="22" rx="5" fill="#FDDAB4"/>
+              <!-- water bottle -->
+              <rect x="44" y="26" width="8" height="20" rx="4" fill="#A8D8F8" opacity="0.9"/>
+              <rect x="45" y="23" width="6" height="5" rx="2" fill="#7EC4F0"/>
+              <rect x="44" y="30" width="8" height="8" rx="0" fill="#C8E8FA" opacity="0.6"/>
+              <!-- face details -->
+              <ellipse cx="26" cy="19" rx="1.5" ry="2" fill="#3D2B1F"/>
+              <ellipse cx="34" cy="19" rx="1.5" ry="2" fill="#3D2B1F"/>
+              <path d="M26 25 Q30 28 34 25" stroke="#D4845A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <circle cx="23" cy="24" r="3" fill="#F0A0A0" opacity="0.4"/>
+              <circle cx="37" cy="24" r="3" fill="#F0A0A0" opacity="0.4"/>
+            </svg>
+          </div>
+          <div class="tip-text">
+            <h4>¡No olvides hidratarte!</h4>
+            <p>Beber suficiente agua ayuda a mantener tu cuerpo saludable.</p>
+          </div>
+          <span class="tip-chevron">›</span>
+        </div>
+      </div>
+
+      <!-- Dots -->
+      <div class="dots">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /scroll-area -->
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="window.location.href='saludya_app.html'">
+      <div class="nav-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#4A90D9"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      </div>
+      <span style="color:#4A90D9">Inicio</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='salud_ya_medicos_screen.html'">
+      <div class="nav-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9AA3B5" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      </div>
+      <span>Médicos</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='salud_ya_medicamentos_screen.html'">
+      <div class="nav-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9AA3B5" stroke-width="2" stroke-linecap="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 002 8.5c0 2.3 1.5 4.05 3 5.5l7 7 7-7z"/></svg>
+      </div>
+      <span>Medicamentos</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='salud_ya_perfil.html'">
+      <div class="nav-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9AA3B5" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <span>Perfil</span>
+    </div>
+  </div>
+
+  <!-- Dynamic Toast Container -->
+  <div id="sy-toast" style="position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); background: #1A2340; color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 12px; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 1000; white-space: nowrap;"></div>
+
+  <!-- Appointment Details Modal -->
+  <div class="modal-overlay" id="detailsModal" onclick="closeDetailsModal(event)">
+    <div class="modal-card">
+      <p class="modal-title">Detalles de la Cita 📅</p>
+      <p class="modal-sub">Información de tu consulta programada</p>
+      
+      <div class="detail-row">
+        <span class="detail-label">Médico:</span>
+        <span class="detail-value" id="modalDocName"></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Especialidad:</span>
+        <span class="detail-value" id="modalSpec"></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Fecha:</span>
+        <span class="detail-value" id="modalDate"></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Hora:</span>
+        <span class="detail-value" id="modalTime"></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Ubicación:</span>
+        <span class="detail-value" id="modalLoc"></span>
+      </div>
+      <div class="detail-row" style="margin-top: 12px;">
+        <span class="detail-label">Estado:</span>
+        <span id="modalStatus" style="font-weight: 700; padding: 4px 10px; border-radius: 20px; font-size: 11px;"></span>
+      </div>
+      
+      <button class="modal-btn" onclick="document.getElementById('detailsModal').classList.remove('active')">Aceptar</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="db.js"></script>
+<script>
+// Show toast message
+function showToast(msg) {
+  const t = document.getElementById('sy-toast');
+  t.textContent = msg;
+  t.style.opacity = 1;
+  setTimeout(() => t.style.opacity = 0, 2200);
+}
+
+// Hamburger menu
+document.querySelector('.hamburger').addEventListener('click', () => {
+  showToast("Menú de opciones (Pronto disponible)");
+});
+
+// Notifications
+document.querySelector('.notif-btn').addEventListener('click', () => {
+  showToast("Tienes 3 notificaciones médicas pendientes");
+});
+
+// Banner agendar cita
+document.querySelector('.banner-btn').addEventListener('click', () => {
+  window.location.href = 'nueva cita.html';
+});
+
+// Quick Access items mapping
+const quickItems = document.querySelectorAll('.quick-item');
+const quickLinks = [
+  'salud_ya_medicos_screen.html',      // Médicos
+  'salud_ya_medicamentos_screen.html', // Medicamentos
+  'salud_ya_centros_screen.html',      // Centros de salud
+  'salud_ya_asistente_ia.html',        // Asistente de IA
+  'salud_ya_historia_medica.html'      // Historia médica
+];
+
+quickItems.forEach((item, index) => {
+  item.style.cursor = 'pointer';
+  item.addEventListener('click', () => {
+    window.location.href = quickLinks[index];
+  });
+});
+
+// Load patient profile
+function initApp() {
+  const patient = SaludYaDB.getPatient();
+  if (patient) {
+    // Update dynamic greeting
+    const firstName = patient.name.split(' ')[0];
+    document.getElementById('greetingText').innerHTML = `¡Hola, ${firstName}! 👋`;
+  }
+  
+  // Render upcoming appointments
+  const appts = SaludYaDB.getAppointments() || [];
+  const activeAppts = appts.filter(a => a.status === 'Confirmada' || a.status === 'Pendiente');
+  const container = document.getElementById('upcomingApptContainer');
+  
+  if (activeAppts.length > 0) {
+    const next = activeAppts[0]; // Get first active appointment
+    container.innerHTML = `
+      <div class="appt-card" style="cursor:pointer;" onclick="showApptDetails(${next.id})">
+        <div class="appt-main">
+          <div class="doctor-avatar">
+            <svg width="48" height="58" viewBox="0 0 48 58" fill="none">
+              <rect width="48" height="58" fill="#E8F0FA"/>
+              <circle cx="24" cy="20" r="13" fill="#FDDAB4"/>
+              <path d="M12 18 Q12 8 24 8 Q36 8 36 18" fill="#3D2B1F"/>
+              <ellipse cx="19" cy="20" rx="1.8" ry="2.2" fill="#3D2B1F"/>
+              <ellipse cx="29" cy="20" rx="1.8" ry="2.2" fill="#3D2B1F"/>
+              <path d="M20 26 Q24 29 28 26" stroke="#D4845A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <rect x="8" y="34" width="32" height="30" rx="6" fill="white"/>
+              <rect x="18" y="34" width="12" height="20" rx="3" fill="#EBF4FF"/>
+              <circle cx="19" cy="44" r="3" fill="none" stroke="#4A90D9" stroke-width="1.5"/>
+              <path d="M22 44 Q28 41 28 48" stroke="#4A90D9" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <circle cx="28" cy="49" r="2" fill="#4A90D9"/>
+            </svg>
+          </div>
+          <div class="appt-info">
+            <h4>${next.docName}</h4>
+            <div class="specialty">${next.spec}</div>
+            <div class="appt-meta">
+              <span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9AA3B5" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                ${next.date}
+              </span>
+              <span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9AA3B5" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                ${next.time}
+              </span>
+            </div>
+          </div>
+          <div class="status-badge" style="background: ${next.status === 'Confirmada' ? '#E8FAF3' : '#FEF4E3'}; color: ${next.status === 'Confirmada' ? '#2ECC87' : '#F5A623'}">${next.status}</div>
+          <span class="chevron">›</span>
+        </div>
+        <div class="appt-footer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2ECC87" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>Ver detalles de la cita</span>
+        </div>
+      </div>
+    `;
+  } else {
+    container.innerHTML = `
+      <div class="appt-card" style="padding: 20px; text-align: center; border-style: dashed; border-color: var(--blue-mid); cursor: pointer;" onclick="window.location.href='nueva cita.html'">
+        <p style="font-size: 13.5px; color: var(--text-mid); font-weight: 600; margin-bottom: 6px;">No tienes citas activas programadas</p>
+        <span style="font-size: 11.5px; color: var(--blue); font-weight: 700;">¡Programa una nueva cita aquí! &rarr;</span>
+      </div>
+    `;
+  }
+}
+
+function showApptDetails(id) {
+  const appts = SaludYaDB.getAppointments() || [];
+  const appt = appts.find(a => a.id === id);
+  if (!appt) return;
+  
+  document.getElementById('modalDocName').textContent = appt.docName;
+  document.getElementById('modalSpec').textContent = appt.spec;
+  document.getElementById('modalDate').textContent = appt.date;
+  document.getElementById('modalTime').textContent = appt.time;
+  document.getElementById('modalLoc').textContent = appt.location || 'Consultorio Médico Salud Ya';
+  
+  const badge = document.getElementById('modalStatus');
+  badge.textContent = appt.status;
+  if (appt.status === 'Confirmada') {
+    badge.style.background = '#E8FAF3';
+    badge.style.color = '#2ECC87';
+  } else {
+    badge.style.background = '#FEF4E3';
+    badge.style.color = '#F5A623';
+  }
+  
+  document.getElementById('detailsModal').classList.add('active');
+}
+
+function closeDetailsModal(e) {
+  if (e.target === document.getElementById('detailsModal')) {
+    document.getElementById('detailsModal').classList.remove('active');
+  }
+}
+
+// Run on load
+initApp();
+</script>

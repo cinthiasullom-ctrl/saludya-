@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Horarios – Salud Ya</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+</head>
+<body>
+<div class="app">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, 'SF Pro Display', sans-serif; }
+.app { background: #f5f5f7; width: 100%; max-width: 1200px; min-height: 100vh; margin: 0 auto; position: relative; font-family: -apple-system, 'Segoe UI', sans-serif; }
+
+.header { background: white; padding: 12px 20px 0; border-bottom: 0.5px solid #e5e5e5; }
+.header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px; }
+.back-btn { font-size: 22px; color: #1c1c1e; cursor: pointer; padding: 4px; }
+.header-title h1 { font-size: 20px; font-weight: 700; color: #1c1c1e; line-height: 1.2; }
+.header-title p { font-size: 13px; color: #8e8e93; }
+.header-actions { display: flex; gap: 16px; }
+.header-actions span { font-size: 20px; cursor: pointer; color: #1c1c1e; }
+.stats-row { background: white; padding: 14px 16px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.stat-card { background: #f9f9f9; border-radius: 12px; padding: 10px 8px; display: flex; align-items: center; gap: 7px; }
+.stat-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.stat-icon.blue { background: #e8f0fe; }
+.stat-icon.green { background: #e6f4ea; }
+.stat-icon.orange { background: #fff3e0; }
+.stat-icon.red { background: #fce8e6; }
+.stat-info strong { font-size: 16px; font-weight: 700; color: #1c1c1e; display: block; line-height: 1.1; }
+.stat-info span { font-size: 9px; color: #8e8e93; line-height: 1.2; display: block; }
+.tabs { background: white; display: flex; border-bottom: 0.5px solid #e5e5e5; padding: 0 20px; margin-top: 8px; }
+.tab { flex: 1; padding: 12px 0; text-align: center; font-size: 14px; color: #8e8e93; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+.tab.active { color: #1a73e8; font-weight: 600; border-bottom: 2px solid #1a73e8; }
+.calendar-nav { background: white; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+.cal-range { display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; color: #1c1c1e; cursor: pointer; }
+.cal-range span { font-size: 11px; color: #8e8e93; }
+.cal-buttons { display: flex; gap: 8px; }
+.cal-btn { background: #f0f0f5; border: none; border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 500; color: #1c1c1e; cursor: pointer; }
+.cal-btn.icon { padding: 6px 10px; }
+.days-row { background: white; padding: 0 12px 12px; display: flex; justify-content: space-between; gap: 4px; }
+.day-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; padding: 6px 4px; border-radius: 10px; transition: background 0.15s; }
+.day-label { font-size: 11px; color: #8e8e93; font-weight: 500; }
+.day-num { font-size: 16px; font-weight: 500; color: #1c1c1e; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+.day-item.active .day-num { background: #1a73e8; color: white; font-weight: 700; }
+.day-item.sunday .day-label, .day-item.sunday .day-num { color: #ea4335; }
+.day-item.active .day-label { color: #1a73e8; }
+.doctor-list { padding: 8px 12px 80px; display: flex; flex-direction: column; gap: 8px; }
+.doctor-card { background: white; border-radius: 14px; padding: 14px; border: 0.5px solid #e5e5e5; }
+.doctor-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+.avatar-wrap { position: relative; flex-shrink: 0; }
+.avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600; color: white; }
+.avatar.ana { background: linear-gradient(135deg, #a8d5ba, #5fa87d); }
+.avatar.carlos { background: linear-gradient(135deg, #8bb4d4, #3a7bbf); }
+.avatar.laura { background: linear-gradient(135deg, #c8a8d5, #9a5fbf); }
+.avatar.miguel { background: linear-gradient(135deg, #a8c4d5, #3a8bbf); }
+.avatar.sofia { background: linear-gradient(135deg, #d5c4a8, #bf9a5f); }
+.online-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; position: absolute; bottom: 2px; right: 2px; }
+.dot-green { background: #34c759; }
+.dot-orange { background: #ff9500; }
+.dot-gray { background: #c7c7cc; }
+.doctor-info { flex: 1; }
+.doctor-name { font-size: 15px; font-weight: 700; color: #1c1c1e; margin-bottom: 3px; }
+.doctor-meta { display: flex; align-items: center; gap: 6px; }
+.specialty { font-size: 12px; color: #8e8e93; }
+.status-badge { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 20px; }
+.badge-active { background: #e6f4ea; color: #1e7e34; }
+.badge-paused { background: #fff3e0; color: #e65100; }
+.badge-inactive { background: #f0f0f5; color: #636366; }
+.menu-btn { font-size: 20px; color: #c7c7cc; cursor: pointer; padding: 2px; }
+.doctor-schedule { display: flex; align-items: center; justify-content: space-between; padding-top: 10px; border-top: 0.5px solid #f0f0f5; }
+.schedule-info { display: flex; align-items: center; gap: 12px; }
+.time-info { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #636366; }
+.time-icon { font-size: 14px; }
+.appointments { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #636366; }
+.avail-badge { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+.avail-green { background: #e6f4ea; color: #1e7e34; border: 0.5px solid #c3e6cb; }
+.avail-orange { background: #fff3e0; color: #e65100; border: 0.5px solid #ffe0b2; }
+.avail-gray { background: #f0f0f5; color: #636366; border: 0.5px solid #d1d1d6; }
+.fab { position: fixed; bottom: 80px; right: calc(50% - 195px + 16px); width: 64px; height: 64px; background: #1a73e8; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 16px rgba(26,115,232,0.35); color: white; }
+.fab span.plus { font-size: 22px; font-weight: 300; line-height: 1; }
+.fab span.label { font-size: 8px; font-weight: 600; line-height: 1.3; text-align: center; }
+.bottom-nav { background: white; border-top: 0.5px solid #e5e5e5; position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 390px; display: flex; justify-content: space-around; padding: 10px 0 20px; }
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; flex: 1; }
+.nav-item i { font-size: 22px; color: #8e8e93; }
+.nav-item span { font-size: 10px; color: #8e8e93; }
+.nav-item.active i, .nav-item.active span { color: #1a73e8; }
+.divider { width: 1px; height: 14px; background: #d1d1d6; align-self: center; }
+@media(max-width:500px){
+  .app{max-width:100vw!important;}
+  .bottom-nav{width:100%!important;left:0!important;transform:none!important;}
+  .fab{right:14px!important;}
+}
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+<div class="app">
+
+  <div class="header">
+    <div class="header-top">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="back-btn"><i class="ti ti-arrow-left" style="font-size:20px;"></i></span>
+        <div class="header-title">
+          <h1>Horarios</h1>
+          <p>Gestiona los horarios de atención</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <i class="ti ti-search" style="font-size:22px;cursor:pointer;color:#1c1c1e;" aria-hidden="true"></i>
+        <i class="ti ti-adjustments-horizontal" style="font-size:22px;cursor:pointer;color:#1c1c1e;" aria-hidden="true"></i>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:10px;"></div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="ti ti-calendar" style="font-size:16px;color:#1a73e8;" aria-hidden="true"></i></div>
+      <div class="stat-info"><strong>28</strong><span>Horarios totales</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="ti ti-clock" style="font-size:16px;color:#34a853;" aria-hidden="true"></i></div>
+      <div class="stat-info"><strong>22</strong><span>Activos</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange"><i class="ti ti-player-pause" style="font-size:16px;color:#ff9500;" aria-hidden="true"></i></div>
+      <div class="stat-info"><strong>3</strong><span>En pausa</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red"><i class="ti ti-circle-x" style="font-size:16px;color:#ea4335;" aria-hidden="true"></i></div>
+      <div class="stat-info"><strong>3</strong><span>Inactivos</span></div>
+    </div>
+  </div>
+
+  <div style="height:8px;"></div>
+
+  <div class="tabs">
+    <div class="tab active">Calendario</div>
+    <div class="tab">Lista</div>
+    <div class="tab">Excepciones</div>
+  </div>
+
+  <div class="calendar-nav">
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="cursor:pointer;font-size:18px;color:#1c1c1e;"><i class="ti ti-chevron-left" aria-hidden="true"></i></span>
+      <span style="font-size:15px;font-weight:600;color:#1c1c1e;">20 - 26 de mayo, 2024</span>
+      <span style="font-size:16px;color:#636366;cursor:pointer;"><i class="ti ti-chevron-down" aria-hidden="true"></i></span>
+    </div>
+    <div class="cal-buttons">
+      <button class="cal-btn">Hoy</button>
+      <button class="cal-btn icon"><i class="ti ti-calendar" style="font-size:14px;" aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <div class="days-row">
+    <div class="day-item">
+      <span class="day-label">Lun</span>
+      <span class="day-num">20</span>
+    </div>
+    <div class="day-item active">
+      <span class="day-label">Mar</span>
+      <span class="day-num">21</span>
+    </div>
+    <div class="day-item">
+      <span class="day-label">Mié</span>
+      <span class="day-num">22</span>
+    </div>
+    <div class="day-item">
+      <span class="day-label">Jue</span>
+      <span class="day-num">23</span>
+    </div>
+    <div class="day-item">
+      <span class="day-label">Vie</span>
+      <span class="day-num">24</span>
+    </div>
+    <div class="day-item">
+      <span class="day-label">Sáb</span>
+      <span class="day-num">25</span>
+    </div>
+    <div class="day-item sunday">
+      <span class="day-label">Dom</span>
+      <span class="day-num" style="color:#ea4335;">26</span>
+    </div>
+  </div>
+
+  <div style="height:6px;background:#f5f5f7;"></div>
+
+  <div class="doctor-list">
+
+    <div class="doctor-card">
+      <div class="doctor-header">
+        <div class="avatar-wrap">
+          <div class="avatar ana">AM</div>
+          <span class="online-dot dot-green"></span>
+        </div>
+        <div class="doctor-info">
+          <div class="doctor-name">Dra. Ana Martínez</div>
+          <div class="doctor-meta">
+            <span class="specialty">Medicina General</span>
+            <span class="status-badge badge-active">Activo</span>
+          </div>
+        </div>
+        <span class="menu-btn"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+      </div>
+      <div class="doctor-schedule">
+        <div class="schedule-info">
+          <div class="time-info">
+            <i class="ti ti-clock time-icon" aria-hidden="true"></i>
+            <span>08:00 AM - 05:00 PM</span>
+          </div>
+          <div class="divider"></div>
+          <div class="appointments">
+            <i class="ti ti-users" style="font-size:14px;" aria-hidden="true"></i>
+            <span>12 citas</span>
+          </div>
+        </div>
+        <span class="avail-badge avail-green">Disponible</span>
+      </div>
+    </div>
+
+    <div class="doctor-card">
+      <div class="doctor-header">
+        <div class="avatar-wrap">
+          <div class="avatar carlos">CR</div>
+          <span class="online-dot dot-green"></span>
+        </div>
+        <div class="doctor-info">
+          <div class="doctor-name">Dr. Carlos Rodríguez</div>
+          <div class="doctor-meta">
+            <span class="specialty">Cardiología</span>
+            <span class="status-badge badge-active">Activo</span>
+          </div>
+        </div>
+        <span class="menu-btn"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+      </div>
+      <div class="doctor-schedule">
+        <div class="schedule-info">
+          <div class="time-info">
+            <i class="ti ti-clock time-icon" aria-hidden="true"></i>
+            <span>09:00 AM - 06:00 PM</span>
+          </div>
+          <div class="divider"></div>
+          <div class="appointments">
+            <i class="ti ti-users" style="font-size:14px;" aria-hidden="true"></i>
+            <span>10 citas</span>
+          </div>
+        </div>
+        <span class="avail-badge avail-green">Disponible</span>
+      </div>
+    </div>
+
+    <div class="doctor-card">
+      <div class="doctor-header">
+        <div class="avatar-wrap">
+          <div class="avatar laura">LS</div>
+          <span class="online-dot dot-orange"></span>
+        </div>
+        <div class="doctor-info">
+          <div class="doctor-name">Dra. Laura Sánchez</div>
+          <div class="doctor-meta">
+            <span class="specialty">Pediatría</span>
+            <span class="status-badge badge-paused">En pausa</span>
+          </div>
+        </div>
+        <span class="menu-btn"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+      </div>
+      <div class="doctor-schedule">
+        <div class="schedule-info">
+          <div class="time-info">
+            <i class="ti ti-clock time-icon" aria-hidden="true"></i>
+            <span>10:00 AM - 02:00 PM</span>
+          </div>
+          <div class="divider"></div>
+          <div class="appointments">
+            <i class="ti ti-users" style="font-size:14px;" aria-hidden="true"></i>
+            <span>6 citas</span>
+          </div>
+        </div>
+        <span class="avail-badge avail-orange">En consulta</span>
+      </div>
+    </div>
+
+    <div class="doctor-card">
+      <div class="doctor-header">
+        <div class="avatar-wrap">
+          <div class="avatar miguel">MT</div>
+          <span class="online-dot dot-green"></span>
+        </div>
+        <div class="doctor-info">
+          <div class="doctor-name">Dr. Miguel Torres</div>
+          <div class="doctor-meta">
+            <span class="specialty">Traumatología</span>
+            <span class="status-badge badge-active">Activo</span>
+          </div>
+        </div>
+        <span class="menu-btn"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+      </div>
+      <div class="doctor-schedule">
+        <div class="schedule-info">
+          <div class="time-info">
+            <i class="ti ti-clock time-icon" aria-hidden="true"></i>
+            <span>08:00 AM - 04:00 PM</span>
+          </div>
+          <div class="divider"></div>
+          <div class="appointments">
+            <i class="ti ti-users" style="font-size:14px;" aria-hidden="true"></i>
+            <span>8 citas</span>
+          </div>
+        </div>
+        <span class="avail-badge avail-green">Disponible</span>
+      </div>
+    </div>
+
+    <div class="doctor-card">
+      <div class="doctor-header">
+        <div class="avatar-wrap">
+          <div class="avatar sofia">SH</div>
+          <span class="online-dot dot-gray"></span>
+        </div>
+        <div class="doctor-info">
+          <div class="doctor-name">Dra. Sofía Herrera</div>
+          <div class="doctor-meta">
+            <span class="specialty">Ginecología</span>
+            <span class="status-badge badge-inactive">Inactivo</span>
+          </div>
+        </div>
+        <span class="menu-btn"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+      </div>
+      <div class="doctor-schedule">
+        <div class="schedule-info">
+          <div class="time-info">
+            <i class="ti ti-clock time-icon" aria-hidden="true"></i>
+            <span>Sin horario asignado</span>
+          </div>
+        </div>
+        <span class="avail-badge avail-gray">Inactivo</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="fab">
+    <span class="plus">+</span>
+    <span class="label">Nuevo<br>horario</span>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='panel_control.html'">
+      <i class="ti ti-home" aria-hidden="true"></i>
+      <span>Inicio</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='salud_ya_doctores.html'">
+      <i class="ti ti-user-circle" aria-hidden="true"></i>
+      <span>Doctores</span>
+    </div>
+    <div class="nav-item active">
+      <i class="ti ti-calendar" aria-hidden="true"></i>
+      <span>Horarios</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='reportes_app.html'">
+      <i class="ti ti-clipboard-list" aria-hidden="true"></i>
+      <span>Reportes</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='configuraciones_app.html'">
+      <i class="ti ti-dots" aria-hidden="true"></i>
+      <span>Más</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+document.querySelectorAll('.day-item').forEach(item => {
+  item.addEventListener('click', function() {
+    document.querySelectorAll('.day-item').forEach(d => d.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+// Back button
+document.querySelector('.back-btn').addEventListener('click', function(){
+  window.location.href = 'panel_control.html';
+});
+</script>
+
+</div>
+</body>
+</html>

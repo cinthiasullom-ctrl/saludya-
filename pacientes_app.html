@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pacientes – Salud Ya</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body {
+  background: #C8D8EE;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+.app {
+  background: #f5f5f7;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: -apple-system, 'SF Pro Display', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 769px) {
+  .app {
+    min-height: calc(100vh - 40px);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+  body { padding: 20px !important; }
+  .stats-row {
+    grid-template-columns: 1fr 1fr 1fr 1fr !important;
+  }
+}
+@media (max-width: 768px) {
+  body { padding: 0 !important; }
+  .app { border-radius: 0 !important; }
+}
+
+.header{background:white;padding:12px 20px 14px;border-bottom:0.5px solid #e5e5e5;}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;}
+.header-left{display:flex;align-items:flex-start;gap:14px;}
+.header-title h1{font-size:22px;font-weight:700;color:#1c1c1e;line-height:1.2;}
+.header-title p{font-size:13px;color:#8e8e93;margin-top:1px;}
+.header-actions{display:flex;gap:16px;}
+.stats-row{background:white;padding:14px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:8px;}
+.stat-card{background:#f9f9f9;border-radius:12px;padding:10px 7px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;}
+.stat-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.si-blue{background:#e8f0fe;}
+.si-green{background:#e6f4ea;}
+.si-orange{background:#fff3e0;}
+.si-purple{background:#f3e8fd;}
+.stat-num{font-size:16px;font-weight:700;color:#1c1c1e;line-height:1;}
+.stat-lbl{font-size:9px;color:#8e8e93;line-height:1.3;}
+.tabs{background:white;display:flex;border-bottom:0.5px solid #e5e5e5;padding:0 12px;margin-top:8px;overflow-x:auto;}
+.tab{padding:12px 8px;font-size:13px;color:#8e8e93;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;}
+.tab.active{color:#1a73e8;font-weight:600;border-bottom:2px solid #1a73e8;}
+.search-bar{background:white;padding:12px;margin-top:8px;display:flex;align-items:center;gap:8px;}
+.search-input{flex:1;display:flex;align-items:center;gap:8px;background:#f5f5f7;border-radius:10px;padding:10px 12px;}
+.search-input span{font-size:13px;color:#8e8e93;}
+.sort-btn{width:38px;height:38px;border-radius:10px;background:#f0f0f5;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.patient-list{background:white;margin-top:8px;display:flex;flex-direction:column;}
+.patient-row{display:flex;align-items:center;padding:13px 14px;border-bottom:0.5px solid #f0f0f5;gap:10px;}
+.avatar{width:52px;height:52px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;}
+.av-1{background:#a8c8d5;}
+.av-2{background:#8bb4a0;}
+.av-3{background:#c4a8d0;}
+.av-4{background:#b0b0c0;}
+.av-5{background:#d0b8a8;}
+.av-6{background:#a8b8d0;}
+.av-7{background:#c4b0b8;}
+.patient-info{flex:1;min-width:0;}
+.patient-name{font-size:14px;font-weight:700;color:#1c1c1e;margin-bottom:2px;}
+.patient-meta{font-size:11px;color:#8e8e93;margin-bottom:1px;}
+.patient-doc{font-size:11px;color:#8e8e93;}
+.patient-right{flex-shrink:0;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;display:inline-block;}
+.badge-active{background:#e6f4ea;color:#1a7a34;}
+.badge-concita{background:#fff3e0;color:#c65c00;}
+.badge-inactive{background:#fce8e6;color:#c0392b;}
+.sub-info{font-size:10px;color:#8e8e93;line-height:1.4;text-align:right;}
+.menu-dot{font-size:18px;color:#c7c7cc;cursor:pointer;padding:0 2px;flex-shrink:0;align-self:center;}
+.fab{width:64px;height:64px;background:#1a73e8;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:white;margin:14px 14px 10px auto;}
+.fab .plus{font-size:22px;font-weight:300;line-height:1;}
+.fab .fab-label{font-size:7px;font-weight:600;line-height:1.3;text-align:center;}
+.bottom-nav{background:white;border-top:0.5px solid #e5e5e5;display:flex;justify-content:space-around;padding:10px 0 20px;position:sticky;bottom:0;width:100%;z-index:10;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;flex:1;}
+.nav-item i{font-size:22px;color:#8e8e93;}
+.nav-item span{font-size:10px;color:#8e8e93;}
+.nav-item.active i,.nav-item.active span{color:#1a73e8;}
+
+/* Modal overlay and card styling */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.active {
+  display: flex;
+}
+.modal-sheet {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px 20px;
+  width: 90%;
+  max-width: 350px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1c1c1e;
+  margin-bottom: 4px;
+}
+.modal-sub {
+  font-size: 12px;
+  color: #8e8e93;
+  margin-bottom: 16px;
+}
+.field-lbl {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #636366;
+  margin-bottom: 5px;
+  display: block;
+}
+.field-input {
+  width: 100%;
+  border: 1px solid #d1d1d6;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #1c1c1e;
+  outline: none;
+  margin-bottom: 12px;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+.field-input:focus {
+  border-color: #1a73e8;
+}
+.modal-save-btn {
+  width: 100%;
+  background: #1a73e8;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.15s;
+}
+.modal-save-btn:hover {
+  background: #1557b0;
+}
+.modal-cancel-txt {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #1a73e8;
+  cursor: pointer;
+}
+.toast {
+  position: fixed;
+  bottom: 85px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1c1c1e;
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 200;
+  white-space: nowrap;
+}
+.toast.show {
+  opacity: 1;
+}
+</style>
+</head>
+<body>
+<div class="app">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+
+<div class="header">
+  <div class="header-top">
+    <div class="header-left">
+      <span style="font-size:22px;color:#1c1c1e;cursor:pointer;margin-top:2px;"><i class="ti ti-menu-2" aria-hidden="true"></i></span>
+      <div class="header-title">
+        <h1>Pacientes</h1>
+        <p>Gestiona la información de tus pacientes</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <i class="ti ti-search" style="font-size:22px;cursor:pointer;color:#1c1c1e;" aria-hidden="true"></i>
+      <i class="ti ti-adjustments-horizontal" style="font-size:22px;cursor:pointer;color:#1c1c1e;" aria-hidden="true"></i>
+    </div>
+  </div>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-icon si-blue"><i class="ti ti-users" style="font-size:14px;color:#1a73e8;" aria-hidden="true"></i></div>
+    <div class="stat-num">1,254</div>
+    <div class="stat-lbl">Total pacientes</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-green"><i class="ti ti-user-check" style="font-size:14px;color:#34a853;" aria-hidden="true"></i></div>
+    <div class="stat-num">412</div>
+    <div class="stat-lbl">Pacientes activos</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-orange"><i class="ti ti-calendar-plus" style="font-size:14px;color:#ff9500;" aria-hidden="true"></i></div>
+    <div class="stat-num">128</div>
+    <div class="stat-lbl">Nuevos este mes</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-purple"><i class="ti ti-cake" style="font-size:14px;color:#9b59b6;" aria-hidden="true"></i></div>
+    <div class="stat-num">65</div>
+    <div class="stat-lbl">Cumpleaños este mes</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active">Todos</div>
+  <div class="tab">Activos</div>
+  <div class="tab">Inactivos</div>
+  <div class="tab">Con cita</div>
+  <div class="tab">Sin cita</div>
+</div>
+
+<div class="search-bar">
+  <div class="search-input">
+    <i class="ti ti-search" style="font-size:16px;color:#8e8e93;" aria-hidden="true"></i>
+    <span>Buscar paciente por nombre, documento o teléfono</span>
+  </div>
+  <div class="sort-btn"><i class="ti ti-arrows-sort" style="font-size:17px;color:#636366;" aria-hidden="true"></i></div>
+</div>
+
+<div class="patient-list">
+
+  <div class="patient-row">
+    <div class="avatar av-1">MG</div>
+    <div class="patient-info">
+      <div class="patient-name">María González López</div>
+      <div class="patient-meta">28 años · Femenino</div>
+      <div class="patient-doc">DNI 12345678 · 987 654 321</div>
+    </div>
+    <div class="patient-right">
+      <span class="badge badge-active">Activo</span>
+      <div class="sub-info">Última cita:<br>20/05/2024</div>
+    </div>
+    <span class="menu-dot"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+  </div>
+
+  <div class="patient-row">
+    <div class="avatar av-2">JP</div>
+    <div class="patient-info">
+      <div class="patient-name">Juan Pérez Ramírez</div>
+      <div class="patient-meta">35 años · Masculino</div>
+      <div class="patient-doc">DNI 87654321 · 912 345 678</div>
+    </div>
+    <div class="patient-right">
+      <span class="badge badge-active">Activo</span>
+      <div class="sub-info">Última cita:<br>18/05/2024</div>
+    </div>
+    <span class="menu-dot"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+  </div>
+
+  <div class="patient-row">
+    <div class="avatar av-3">LS</div>
+    <div class="patient-info">
+      <div class="patient-name">Laura Sánchez Díaz</div>
+      <div class="patient-meta">22 años · Femenino</div>
+      <div class="patient-doc">DNI 11223344 · 923 456 789</div>
+    </div>
+    <div class="patient-right">
+      <span class="badge badge-concita">Con cita</span>
+      <div class="sub-info">Próxima cita:<br>25/05/2024 · 10:00 AM</div>
+    </div>
+    <span class="menu-dot"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+  </div>
+
+  <div class="patient-row">
+    <div class="avatar av-4">RD</div>
+    <div class="patient-info">
+      <div class="patient-name">Roberto Díaz Morales</div>
+      <div class="patient-meta">60 años · Masculino</div>
+      <div class="patient-doc">DNI 33445566 · 934 567 890</div>
+    </div>
+    <div class="patient-right">
+      <span class="badge badge-active">Activo</span>
+      <div class="sub-info">Última cita:<br>10/05/2024</div>
+    </div>
+    <span class="menu-dot"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+  </div>
+
+  <div class="patient-row">
+    <div class="avatar av-5">CH</div>
+    <div class="patient-info">
+      <div class="patient-name">Carmen Herrera Ruiz</div>
+      <div class="patient-meta">55 años · Femenino</div>
+      <div class="patient-doc">DNI 44556677 · 945 678 901</div>
+    </div>
+    <div class="patient-right">
+      <span class="badge badge-inactive">Inactivo</span>
+      <div class="sub-info">Sin citas recientes</div>
+    </div>
+    <span class="menu-dot"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+  </div>
+
+  <div class="patient-row">
+    <div class="avatar av-6">AL</div>
+    <div class="patient-info">
+      <div class="patient-name">Andrés López Torres</div>
+      <div class="patient-meta">27 años · Masculino</div>
+      <div class="patient-doc">DNI 55667788 · 956 789 012</div>
+    </div>
+    <div class="patient-right">
+      <span class="badge badge-concita">Con cita</span>
+      <div class="sub-info">Próxima cita:<br>24/05/2024 · 09:30 AM</div>
+    </div>
+    <span class="menu-dot"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+  </div>
+
+  <div class="patient-row">
+    <div class="avatar av-7">SM</div>
+    <div class="patient-info">
+      <div class="patient-name">Sofia Martinez Vega</div>
+      <div class="patient-meta">30 años · Femenino</div>
+      <div class="patient-doc">DNI 66778899 · 967 890 123</div>
+    </div>
+    <div class="patient-right">
+      <span class="badge badge-active">Activo</span>
+      <div class="sub-info">Última cita:<br>15/05/2024</div>
+    </div>
+    <span class="menu-dot"><i class="ti ti-dots-vertical" aria-hidden="true"></i></span>
+  </div>
+
+</div>
+
+<div class="fab" onclick="openAddModal()">
+  <span class="plus">+</span>
+  <span class="fab-label">Nuevo<br>paciente</span>
+</div>
+
+<!-- PATIENT MODAL -->
+<div class="modal-overlay" id="addPatientModal">
+  <div class="modal-sheet">
+    <div class="modal-title">Agregar paciente</div>
+    <div class="modal-sub">Registra la información del nuevo paciente</div>
+    
+    <label class="field-lbl">Nombre completo</label>
+    <input class="field-input" type="text" id="newPatientName" placeholder="Ej: Juan Pérez Soto"/>
+    
+    <div style="display:flex; gap:8px;">
+      <div style="flex:1;">
+        <label class="field-lbl">Edad</label>
+        <input class="field-input" type="number" id="newPatientAge" placeholder="Ej: 30"/>
+      </div>
+      <div style="flex:1;">
+        <label class="field-lbl">Género</label>
+        <select class="field-input" id="newPatientGender">
+          <option>Masculino</option>
+          <option>Femenino</option>
+          <option>Otro</option>
+        </select>
+      </div>
+    </div>
+    
+    <label class="field-lbl">Documento (DNI)</label>
+    <input class="field-input" type="text" id="newPatientDoc" placeholder="Ej: DNI 99887766"/>
+    
+    <label class="field-lbl">Teléfono</label>
+    <input class="field-input" type="tel" id="newPatientPhone" placeholder="Ej: 999 888 777"/>
+    
+    <button class="modal-save-btn" onclick="savePatient()">Guardar paciente</button>
+    <p class="modal-cancel-txt" onclick="closeAddModal()">Cancelar</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="bottom-nav">
+  <div class="nav-item" onclick="window.location.href='panel_control.html'">
+    <i class="ti ti-home" aria-hidden="true"></i>
+    <span>Inicio</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='salud_ya_doctores.html'">
+    <i class="ti ti-user-circle" aria-hidden="true"></i>
+    <span>Doctores</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='horarios_medicos_app.html'">
+    <i class="ti ti-calendar" aria-hidden="true"></i>
+    <span>Horarios</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='reportes_app.html'">
+    <i class="ti ti-clipboard-list" aria-hidden="true"></i>
+    <span>Reportes</span>
+  </div>
+  <div class="nav-item active">
+    <i class="ti ti-user" aria-hidden="true"></i>
+    <span>Pacientes</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='configuraciones_app.html'">
+    <i class="ti ti-dots" aria-hidden="true"></i>
+    <span>Más</span>
+  </div>
+</div>
+
+</div>
+<script src="db.js"></script>
+<script>
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Load patients from db
+function loadPatients(){
+  if(typeof SaludYaDB !== 'undefined'){
+    const patients = SaludYaDB.getPatients();
+    const list = document.querySelector('.patient-list');
+    if(patients && patients.length > 0 && list){
+      list.innerHTML = patients.map((p, i) => {
+        const initials = p.name.split(' ').map(w=>w[0]).join('').substring(0,2);
+        const statusClass = p.status === 'Activo' ? 'badge-active' : p.status === 'Con cita' ? 'badge-concita' : 'badge-inactive';
+        return `<div class="patient-row">
+          <div class="avatar av-${(i%7)+1}">${initials}</div>
+          <div class="patient-info">
+            <div class="patient-name">${p.name}</div>
+            <div class="patient-meta">${p.age} años · ${p.gender} · ${p.doc}</div>
+            <div class="patient-doc"><i class="ti ti-phone" style="font-size:12px;"></i> ${p.phone}</div>
+          </div>
+          <div class="patient-right">
+            <span class="badge ${statusClass}">${p.status}</span>
+            <div class="sub-info">${p.lastAppt}</div>
+          </div>
+          <span class="menu-dot">⋮</span>
+        </div>`;
+      }).join('');
+    }
+  }
+}
+
+const si = document.querySelector('.search-input');
+si.style.cursor='text';
+si.addEventListener('click',function(){
+  this.querySelector('span').textContent='';
+  const inp=document.createElement('input');
+  inp.style.cssText='border:none;outline:none;background:transparent;font-size:13px;color:#1c1c1e;width:100%;';
+  inp.placeholder='Buscar...';
+  this.appendChild(inp);
+  inp.focus();
+  inp.addEventListener('input', function() {
+    filterPatients(this.value);
+  });
+});
+
+function filterPatients(q) {
+  const query = q.toLowerCase();
+  const patients = SaludYaDB.getPatients() || [];
+  const list = document.querySelector('.patient-list');
+  if(!list) return;
+  
+  const filtered = patients.filter(p => p.name.toLowerCase().includes(query) || p.doc.toLowerCase().includes(query) || p.phone.toLowerCase().includes(query));
+  
+  if(filtered.length === 0) {
+    list.innerHTML = `<div style="text-align: center; padding: 40px 20px; color: #8e8e93;">
+      <i class="ti ti-users" style="font-size: 32px; color: #ccc; display: block; margin-bottom: 8px;"></i>
+      <p style="font-size: 13px;">No se encontraron pacientes</p>
+    </div>`;
+    return;
+  }
+  
+  const avatarClasses = ['av-1', 'av-2', 'av-3', 'av-4', 'av-5', 'av-6', 'av-7'];
+  list.innerHTML = filtered.map((p, i) => {
+    const initials = p.name.split(' ').map(w=>w[0]).join('').substring(0,2);
+    const statusClass = p.status === 'Activo' ? 'badge-active' : p.status === 'Con cita' ? 'badge-concita' : 'badge-inactive';
+    return `<div class="patient-row">
+      <div class="avatar ${avatarClasses[i % avatarClasses.length]}">${initials}</div>
+      <div class="patient-info">
+        <div class="patient-name">${p.name}</div>
+        <div class="patient-meta">${p.age} años · ${p.gender} · ${p.doc}</div>
+        <div class="patient-doc"><i class="ti ti-phone" style="font-size:12px;"></i> ${p.phone}</div>
+      </div>
+      <div class="patient-right">
+        <span class="badge ${statusClass}">${p.status}</span>
+        <div class="sub-info">${p.lastAppt}</div>
+      </div>
+      <span class="menu-dot">⋮</span>
+    </div>`;
+  }).join('');
+}
+
+function openAddModal() {
+  document.getElementById('newPatientName').value = '';
+  document.getElementById('newPatientAge').value = '';
+  document.getElementById('newPatientDoc').value = '';
+  document.getElementById('newPatientPhone').value = '';
+  document.getElementById('addPatientModal').classList.add('active');
+}
+
+function closeAddModal() {
+  document.getElementById('addPatientModal').classList.remove('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function savePatient() {
+  const name = document.getElementById('newPatientName').value.trim();
+  const age = parseInt(document.getElementById('newPatientAge').value.trim());
+  const gender = document.getElementById('newPatientGender').value;
+  const doc = document.getElementById('newPatientDoc').value.trim();
+  const phone = document.getElementById('newPatientPhone').value.trim();
+  
+  if(!name || !age || !doc || !phone) {
+    showToast('Por favor completa todos los campos.');
+    return;
+  }
+  
+  const newPat = {
+    id: Date.now(),
+    name,
+    age,
+    gender,
+    doc,
+    phone,
+    status: 'Activo',
+    lastAppt: 'Nuevo paciente'
+  };
+  
+  const patients = SaludYaDB.getPatients() || [];
+  patients.unshift(newPat);
+  SaludYaDB.savePatients(patients);
+  
+  loadPatients();
+  closeAddModal();
+  showToast('✓ Paciente agregado exitosamente');
+}
+
+// Close modal on click outside
+document.getElementById('addPatientModal').addEventListener('click', function(e) {
+  if (e.target === this) closeAddModal();
+});
+
+loadPatients();
+</script>
+</body>
+</html>
+

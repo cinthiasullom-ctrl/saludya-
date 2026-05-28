@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Perfil – Salud Ya</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+.app {
+  background: #ffffff;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: -apple-system, 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 769px) {
+  .app {
+    min-height: calc(100vh - 40px);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+  body { padding: 20px !important; }
+  .quick-grid {
+    grid-template-columns: 1fr 1fr 1fr !important;
+  }
+}
+@media (max-width: 768px) {
+  body { padding: 0 !important; }
+  .app { border-radius: 0 !important; }
+}
+
+.topbar { background: #fff; padding: 14px 18px 10px; display: flex; align-items: center; justify-content: space-between; border-bottom: 0.5px solid #e8eaed; }
+.logo { display: flex; align-items: center; gap: 6px; font-size: 20px; font-weight: 700; }
+.logo svg { width: 30px; height: 30px; }
+.logo .salud { color: #1a5fb4; } .logo .ya { color: #26a269; }
+.icon-btn { background: none; border: none; font-size: 20px; color: #555; cursor: pointer; }
+.notif-wrap { position: relative; }
+.notif-badge { position: absolute; top: -4px; right: -4px; background: #e5a50a; color: #fff; font-size: 10px; font-weight: 700; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.content { padding: 18px 16px 20px; }
+.page-title { font-size: 24px; font-weight: 700; color: #1a1a2e; }
+.page-sub { font-size: 13px; color: #6c757d; margin-top: 3px; }
+.profile-card { background: #fff; border-radius: 14px; padding: 16px; margin-top: 16px; border: 0.5px solid #e8eaed; display: flex; gap: 14px; align-items: flex-start; }
+.avatar-wrap { position: relative; flex-shrink: 0; }
+.avatar { width: 72px; height: 72px; border-radius: 50%; background: #d4e8f7; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; color: #1a5fb4; border: 2px solid #e8eaed; overflow: hidden; }
+.cam-btn { position: absolute; bottom: 0; right: 0; width: 24px; height: 24px; border-radius: 50%; background: #1a5fb4; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #fff; border: 2px solid #fff; cursor: pointer; }
+.profile-info { flex: 1; }
+.profile-name { font-size: 16px; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; }
+.profile-row { display: flex; align-items: center; gap: 7px; font-size: 13px; color: #444; margin-bottom: 5px; }
+.profile-row i { font-size: 14px; color: #888; }
+.edit-btn { display: flex; align-items: center; gap: 5px; border: 1px solid #1a5fb4; color: #1a5fb4; background: #fff; border-radius: 8px; padding: 5px 11px; font-size: 13px; font-weight: 500; cursor: pointer; margin-left: auto; flex-shrink: 0; transition: background .15s; }
+.edit-btn:hover { background: #e6f1fb; }
+.member-card { background: #fff; border-radius: 14px; padding: 14px 16px; margin-top: 12px; border: 0.5px solid #e8eaed; display: flex; align-items: center; gap: 12px; }
+.member-icon { width: 44px; height: 44px; border-radius: 50%; background: #e1f5ee; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #26a269; flex-shrink: 0; }
+.member-info { flex: 1; }
+.member-title { font-size: 14px; font-weight: 700; color: #26a269; }
+.member-verified { font-size: 12px; color: #26a269; display: flex; align-items: center; gap: 4px; margin-top: 2px; }
+.member-since { font-size: 11px; color: #6c757d; margin-top: 2px; }
+.mem-btn { display: flex; align-items: center; gap: 5px; border: 1.5px solid #26a269; color: #26a269; background: #fff; border-radius: 8px; padding: 7px 11px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.chevron-sm { font-size: 16px; color: #aaa; margin-left: 4px; }
+.section-title { font-size: 15px; font-weight: 700; color: #1a1a2e; margin-top: 20px; margin-bottom: 10px; }
+.quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.quick-item { background: #fff; border-radius: 12px; border: 0.5px solid #e8eaed; padding: 13px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: background .15s; }
+.quick-item:hover { background: #f8f9fa; }
+.quick-left { display: flex; align-items: center; gap: 10px; }
+.quick-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.qi-blue { background: #e6f1fb; color: #1a5fb4; }
+.qi-red { background: #fcebeb; color: #e24b4a; }
+.qi-green { background: #e1f5ee; color: #26a269; }
+.qi-amber { background: #faeeda; color: #ba7517; }
+.qi-purple { background: #eeedfe; color: #7f77dd; }
+.qi-teal { background: #e1f5ee; color: #0f6e56; }
+.quick-label { font-size: 12px; font-weight: 600; color: #1a1a2e; }
+.pref-list { background: #fff; border-radius: 14px; border: 0.5px solid #e8eaed; overflow: hidden; margin-top: 10px; }
+.pref-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 0.5px solid #f0f2f4; cursor: pointer; transition: background .15s; }
+.pref-item:last-child { border-bottom: none; }
+.pref-item:hover { background: #f8f9fa; }
+.pref-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.pref-label { flex: 1; font-size: 14px; color: #1a1a2e; }
+.pref-val { font-size: 13px; color: #6c757d; }
+.toggle { width: 42px; height: 24px; border-radius: 12px; background: #d1d5db; position: relative; cursor: pointer; transition: background 0.2s; }
+.toggle.on { background: #26a269; }
+.toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: left 0.2s; }
+.toggle.on::after { left: 21px; }
+.logout-btn { background: #fff; border: 0.5px solid #e8eaed; border-radius: 14px; width: 100%; padding: 16px; margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 600; color: #e24b4a; cursor: pointer; border: 1px solid #fdd; transition: background .15s; }
+.logout-btn:hover { background: #fef2f2; }
+.bottom-nav { background: #fff; border-top: 0.5px solid #e8eaed; display: flex; padding: 8px 0 10px; position: sticky; bottom: 0; left: 0; right: 0; width: 100%; z-index: 10; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 0; }
+.nav-icon { font-size: 22px; color: #aaa; }
+.nav-label { font-size: 10px; color: #aaa; font-weight: 500; }
+.nav-item.active .nav-icon { color: #1a5fb4; }
+.nav-item.active .nav-label { color: #1a5fb4; font-weight: 700; }
+
+/* Edit Profile Modal */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:100; align-items:center; justify-content:center; }
+.modal-overlay.active { display:flex; }
+.modal-sheet { background:#fff; border-radius:20px; padding:24px 20px 28px; width:92%; max-width:360px; max-height:85vh; overflow-y:auto; animation: slideUp .3s ease; }
+@keyframes slideUp { from { transform: translateY(30px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+.modal-handle { width:40px; height:4px; background:#ddd; border-radius:2px; margin:0 auto 16px; }
+.modal-title { font-size:17px; font-weight:700; color:#1a1a2e; margin-bottom:4px; }
+.modal-sub { font-size:12px; color:#888; margin-bottom:16px; }
+.field-lbl { font-size:11.5px; font-weight:600; color:#555; margin-bottom:5px; display:block; }
+.field-input { width:100%; border:1px solid #ddd; border-radius:10px; padding:10px 12px; font-size:13px; color:#333; outline:none; margin-bottom:12px; background:#fff; transition: border-color .2s; }
+.field-input:focus { border-color:#1a5fb4; }
+.modal-save-btn { width:100%; background:#1a5fb4; color:#fff; border:none; border-radius:14px; padding:13px; font-size:14px; font-weight:700; cursor:pointer; margin-top:4px; transition:background .15s; }
+.modal-save-btn:hover { background:#164e9e; }
+.modal-cancel-txt { text-align:center; margin-top:10px; font-size:12px; color:#1a5fb4; cursor:pointer; }
+
+.toast { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#1a2d5a; color:#fff; padding:8px 18px; border-radius:20px; font-size:12px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .3s; z-index:200; }
+.toast.show { opacity:1; }
+</style>
+
+<!-- Removed duplicate .app container -->
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="logo">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="19" fill="#e6f1fb" stroke="#b5d4f4" stroke-width="1"/>
+        <path d="M20 28c-6-4-10-8-10-12a6 6 0 0112 0 6 6 0 0112 0c0 4-4 8-10 12z" fill="#1a5fb4" opacity="0.12"/>
+        <path d="M20 28c-6-4-10-8-10-12a6 6 0 0112 0 6 6 0 0112 0c0 4-4 8-10 12z" fill="none" stroke="#1a5fb4" stroke-width="1.5"/>
+        <path d="M16 19h8M20 15v8" stroke="#26a269" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="salud">Salud</span><span class="ya"> Ya</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="icon-btn" aria-label="Configuración" onclick="window.location.href='salud_ya_configuracion.html'"><i class="ti ti-settings" aria-hidden="true"></i></button>
+      <div class="notif-wrap">
+        <button class="icon-btn" aria-label="Notificaciones"><i class="ti ti-bell" aria-hidden="true"></i></button>
+        <span class="notif-badge">3</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-title">Mi perfil</div>
+    <div class="page-sub">Gestiona tu información personal</div>
+
+    <div class="profile-card">
+      <div class="avatar-wrap">
+        <div class="avatar" id="avatarInitials">ML</div>
+        <div class="cam-btn"><i class="ti ti-camera" style="font-size:11px" aria-hidden="true"></i></div>
+      </div>
+      <div class="profile-info">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+          <div class="profile-name" id="profileName">María López García</div>
+          <button class="edit-btn" onclick="openEditModal()"><i class="ti ti-edit" style="font-size:13px" aria-hidden="true"></i> Editar</button>
+        </div>
+        <div class="profile-row" id="profileAge"><i class="ti ti-calendar" aria-hidden="true"></i> 24 años</div>
+        <div class="profile-row" id="profileGender"><i class="ti ti-gender-female" aria-hidden="true"></i> Femenino</div>
+        <div class="profile-row" id="profileBlood"><i class="ti ti-droplet" aria-hidden="true"></i> O+</div>
+        <div class="profile-row" id="profileEmail"><i class="ti ti-mail" aria-hidden="true"></i> maria.lopez@gmail.com</div>
+        <div class="profile-row" id="profilePhone"><i class="ti ti-phone" aria-hidden="true"></i> +52 123 456 7890</div>
+      </div>
+    </div>
+
+    <div class="member-card">
+      <div class="member-icon"><i class="ti ti-shield-check" aria-hidden="true"></i></div>
+      <div class="member-info">
+        <div class="member-title">Miembro Salud Ya</div>
+        <div class="member-verified"><i class="ti ti-circle-check" style="font-size:13px" aria-hidden="true"></i> Cuenta verificada</div>
+        <div class="member-since">Desde: 15 de marzo de 2024</div>
+      </div>
+      <button class="mem-btn"><i class="ti ti-crown" style="font-size:13px" aria-hidden="true"></i> Ver membresía</button>
+      <span class="chevron-sm"><i class="ti ti-chevron-right" aria-hidden="true"></i></span>
+    </div>
+
+    <div class="section-title">Accesos rápidos</div>
+    <div class="quick-grid">
+      <div class="quick-item" onclick="openEditModal()">
+        <div class="quick-left">
+          <div class="quick-icon qi-blue"><i class="ti ti-user" aria-hidden="true"></i></div>
+          <span class="quick-label">Información personal</span>
+        </div>
+        <i class="ti ti-chevron-right" style="font-size:14px;color:#aaa" aria-hidden="true"></i>
+      </div>
+      <div class="quick-item" onclick="window.location.href='salud_ya_historia_medica.html'">
+        <div class="quick-left">
+          <div class="quick-icon qi-red"><i class="ti ti-heart-rate-monitor" aria-hidden="true"></i></div>
+          <span class="quick-label">Información de salud</span>
+        </div>
+        <i class="ti ti-chevron-right" style="font-size:14px;color:#aaa" aria-hidden="true"></i>
+      </div>
+      <div class="quick-item">
+        <div class="quick-left">
+          <div class="quick-icon qi-green"><i class="ti ti-shield" aria-hidden="true"></i></div>
+          <span class="quick-label">Seguridad y privacidad</span>
+        </div>
+        <i class="ti ti-chevron-right" style="font-size:14px;color:#aaa" aria-hidden="true"></i>
+      </div>
+      <div class="quick-item">
+        <div class="quick-left">
+          <div class="quick-icon qi-amber"><i class="ti ti-bell" aria-hidden="true"></i></div>
+          <span class="quick-label">Notificaciones</span>
+        </div>
+        <i class="ti ti-chevron-right" style="font-size:14px;color:#aaa" aria-hidden="true"></i>
+      </div>
+      <div class="quick-item">
+        <div class="quick-left">
+          <div class="quick-icon qi-purple"><i class="ti ti-credit-card" aria-hidden="true"></i></div>
+          <span class="quick-label">Métodos de pago</span>
+        </div>
+        <i class="ti ti-chevron-right" style="font-size:14px;color:#aaa" aria-hidden="true"></i>
+      </div>
+      <div class="quick-item">
+        <div class="quick-left">
+          <div class="quick-icon qi-teal"><i class="ti ti-headset" aria-hidden="true"></i></div>
+          <span class="quick-label">Ayuda y soporte</span>
+        </div>
+        <i class="ti ti-chevron-right" style="font-size:14px;color:#aaa" aria-hidden="true"></i>
+      </div>
+    </div>
+
+    <div class="section-title">Preferencias</div>
+    <div class="pref-list">
+      <div class="pref-item">
+        <div class="pref-icon qi-blue"><i class="ti ti-world" aria-hidden="true"></i></div>
+        <span class="pref-label">Idioma</span>
+        <span class="pref-val">Español</span>
+        <i class="ti ti-chevron-right" style="font-size:14px;color:#aaa;margin-left:6px" aria-hidden="true"></i>
+      </div>
+      <div class="pref-item">
+        <div class="pref-icon" style="background:#eeedfe;color:#7f77dd"><i class="ti ti-moon" aria-hidden="true"></i></div>
+        <span class="pref-label">Modo oscuro</span>
+        <div class="toggle" id="darkToggle" onclick="this.classList.toggle('on')" aria-label="Activar modo oscuro"></div>
+      </div>
+      <div class="pref-item" onclick="window.location.href='salud_ya_configuracion.html'">
+        <div class="pref-icon" style="background:#e6f1fb;color:#1a5fb4"><i class="ti ti-accessible" aria-hidden="true"></i></div>
+        <span class="pref-label">Accesibilidad</span>
+        <i class="ti ti-chevron-right" style="font-size:14px;color:#aaa;margin-left:auto" aria-hidden="true"></i>
+      </div>
+    </div>
+
+    <button class="logout-btn" id="logoutBtn" onclick="handleLogout()">
+      <i class="ti ti-logout" style="font-size:18px" aria-hidden="true"></i>
+      Cerrar sesión
+    </button>
+
+    <div style="height:8px;"></div>
+  </div>
+
+  <!-- EDIT PROFILE MODAL -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Editar perfil</div>
+      <div class="modal-sub">Actualiza tu información personal</div>
+      <label class="field-lbl">Nombre completo</label>
+      <input class="field-input" type="text" id="editName" placeholder="Tu nombre completo"/>
+      <label class="field-lbl">Edad</label>
+      <input class="field-input" type="number" id="editAge" placeholder="Tu edad"/>
+      <label class="field-lbl">Género</label>
+      <select class="field-input" id="editGender">
+        <option>Femenino</option>
+        <option>Masculino</option>
+        <option>Otro</option>
+      </select>
+      <label class="field-lbl">Tipo de sangre</label>
+      <select class="field-input" id="editBlood">
+        <option>O+</option><option>O-</option><option>A+</option><option>A-</option>
+        <option>B+</option><option>B-</option><option>AB+</option><option>AB-</option>
+      </select>
+      <label class="field-lbl">Correo electrónico</label>
+      <input class="field-input" type="email" id="editEmail" placeholder="correo@ejemplo.com"/>
+      <label class="field-lbl">Teléfono</label>
+      <input class="field-input" type="tel" id="editPhone" placeholder="+52 123 456 7890"/>
+      <button class="modal-save-btn" onclick="saveProfile()">Guardar cambios</button>
+      <p class="modal-cancel-txt" onclick="closeEditModal()">Cancelar</p>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='saludya_app.html'">
+      <span class="nav-icon"><i class="ti ti-home" aria-hidden="true"></i></span>
+      <span class="nav-label">Inicio</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='salud_ya_medicos_screen.html'">
+      <span class="nav-icon"><i class="ti ti-users" aria-hidden="true"></i></span>
+      <span class="nav-label">Médicos</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='salud_ya_medicamentos_screen.html'">
+      <span class="nav-icon"><i class="ti ti-pill" aria-hidden="true"></i></span>
+      <span class="nav-label">Medicamentos</span>
+    </div>
+    <div class="nav-item active">
+      <span class="nav-icon"><i class="ti ti-user-circle" aria-hidden="true"></i></span>
+      <span class="nav-label">Perfil</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="db.js"></script>
+<script>
+let patient = null;
+
+function loadProfile(){
+  if(typeof SaludYaDB !== 'undefined'){
+    patient = SaludYaDB.getPatient();
+  }
+  if(!patient){
+    patient = { name:"María López García", age:24, gender:"Femenino", bloodType:"O+", email:"maria.lopez@gmail.com", phone:"+52 123 456 7890", avatar:"ML" };
+  }
+  renderProfile();
+}
+
+function renderProfile(){
+  const initials = patient.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('avatarInitials').textContent = initials;
+  document.getElementById('profileName').textContent = patient.name;
+  document.getElementById('profileAge').innerHTML = '<i class="ti ti-calendar" aria-hidden="true"></i> ' + patient.age + ' años';
+  document.getElementById('profileGender').innerHTML = '<i class="ti ti-gender-female" aria-hidden="true"></i> ' + patient.gender;
+  document.getElementById('profileBlood').innerHTML = '<i class="ti ti-droplet" aria-hidden="true"></i> ' + patient.bloodType;
+  document.getElementById('profileEmail').innerHTML = '<i class="ti ti-mail" aria-hidden="true"></i> ' + patient.email;
+  document.getElementById('profilePhone').innerHTML = '<i class="ti ti-phone" aria-hidden="true"></i> ' + patient.phone;
+}
+
+function openEditModal(){
+  document.getElementById('editName').value = patient.name;
+  document.getElementById('editAge').value = patient.age;
+  document.getElementById('editGender').value = patient.gender;
+  document.getElementById('editBlood').value = patient.bloodType;
+  document.getElementById('editEmail').value = patient.email;
+  document.getElementById('editPhone').value = patient.phone;
+  document.getElementById('editModal').classList.add('active');
+}
+
+function closeEditModal(){
+  document.getElementById('editModal').classList.remove('active');
+}
+
+function saveProfile(){
+  const name = document.getElementById('editName').value.trim();
+  if(!name){ showToast('Ingresa tu nombre'); return; }
+  patient.name = name;
+  patient.age = parseInt(document.getElementById('editAge').value) || patient.age;
+  patient.gender = document.getElementById('editGender').value;
+  patient.bloodType = document.getElementById('editBlood').value;
+  patient.email = document.getElementById('editEmail').value.trim();
+  patient.phone = document.getElementById('editPhone').value.trim();
+  patient.avatar = name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+
+  if(typeof SaludYaDB !== 'undefined'){
+    SaludYaDB.savePatient(patient);
+  }
+  renderProfile();
+  closeEditModal();
+  showToast('✓ Perfil actualizado exitosamente');
+}
+
+function handleLogout(){
+  if(typeof SaludYaDB !== 'undefined'){
+    SaludYaDB.logout();
+  } else {
+    window.location.href = 'salud_ya_welcome_screen.html';
+  }
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+// Close modal on overlay click
+document.getElementById('editModal').addEventListener('click', function(e){
+  if(e.target === this) closeEditModal();
+});
+
+loadProfile();
+</script>
+</body>
+</html>

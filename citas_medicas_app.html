@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Citas Médicas – Salud Ya</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body {
+  background: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+.app {
+  background: #ffffff;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: -apple-system, 'SF Pro Display', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 769px) {
+  .app {
+    min-height: calc(100vh - 40px);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+  body { padding: 20px !important; }
+}
+@media (max-width: 768px) {
+  body { padding: 0 !important; }
+  .app { border-radius: 0 !important; }
+}
+
+.header{background:white;padding:12px 20px 14px;border-bottom:0.5px solid #e5e5e5;}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;}
+.header-left{display:flex;align-items:flex-start;gap:14px;}
+.menu-icon{font-size:22px;color:#1c1c1e;cursor:pointer;margin-top:2px;}
+.header-title h1{font-size:22px;font-weight:700;color:#1c1c1e;line-height:1.2;}
+.header-title p{font-size:13px;color:#8e8e93;margin-top:1px;}
+.header-actions{display:flex;gap:16px;}
+.stats-row{background:white;padding:14px 12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px;}
+.stat-card{background:#f9f9f9;border-radius:12px;padding:10px 8px;display:flex;align-items:center;gap:6px;}
+.stat-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.si-blue{background:#e8f0fe;}
+.si-green{background:#e6f4ea;}
+.si-orange{background:#fff3e0;}
+.si-purple{background:#f3e8fd;}
+.stat-info strong{font-size:15px;font-weight:700;color:#1c1c1e;display:block;line-height:1.1;}
+.stat-info span{font-size:9px;color:#8e8e93;display:block;line-height:1.3;}
+.tabs{background:white;display:flex;border-bottom:0.5px solid #e5e5e5;padding:0 16px;margin-top:8px;overflow-x:auto;}
+.tab{padding:12px 10px;text-align:center;font-size:13px;color:#8e8e93;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;}
+.tab.active{color:#1a73e8;font-weight:600;border-bottom:2px solid #1a73e8;}
+.date-header{background:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-top:8px;border-bottom:0.5px solid #e5e5e5;}
+.date-left{display:flex;align-items:center;gap:8px;}
+.date-text{font-size:14px;font-weight:600;color:#1c1c1e;}
+.date-count{font-size:13px;font-weight:600;color:#1a73e8;}
+.appt-list{display:flex;flex-direction:column;gap:0;background:white;margin-top:8px;}
+.appt-row{display:flex;align-items:flex-start;padding:14px 16px;border-bottom:0.5px solid #f0f0f5;gap:10px;}
+.time-col{width:46px;flex-shrink:0;text-align:center;}
+.time-hour{font-size:14px;font-weight:700;color:#1a73e8;line-height:1.1;}
+.time-hour.orange{color:#ff9500;}
+.time-hour.red{color:#ea4335;}
+.time-ampm{font-size:11px;color:#8e8e93;font-weight:500;}
+.avatar{width:46px;height:46px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;}
+.av-a{background:#a8d5ba;}
+.av-b{background:#8bb4d4;}
+.av-c{background:#c8a8d5;}
+.av-d{background:#b0b8c8;}
+.av-e{background:#d5a8b8;}
+.av-f{background:#a8b8d5;}
+.patient-info{flex:1;min-width:0;}
+.patient-name{font-size:14px;font-weight:700;color:#1c1c1e;margin-bottom:2px;}
+.patient-meta{font-size:11px;color:#8e8e93;margin-bottom:2px;}
+.patient-type{font-size:11px;color:#636366;}
+.doctor-col{flex-shrink:0;text-align:right;min-width:110px;}
+.doctor-name{font-size:12px;font-weight:600;color:#1c1c1e;margin-bottom:1px;}
+.doctor-spec{font-size:10px;color:#8e8e93;margin-bottom:5px;}
+.status-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;}
+.sb-confirmed{background:#e6f4ea;color:#1e7e34;}
+.sb-pending{background:#fff3e0;color:#c65c00;}
+.sb-cancelled{background:#fce8e6;color:#c0392b;}
+.menu-dot{font-size:18px;color:#c7c7cc;cursor:pointer;padding:0 2px;margin-top:2px;flex-shrink:0;}
+.info-banner{background:#ffffff;margin:8px 12px;border-radius:10px;padding:11px 14px;display:flex;align-items:center;gap:8px;}
+.info-text{flex:1;font-size:12px;color:#1a73e8;line-height:1.4;}
+.info-close{font-size:16px;color:#1a73e8;cursor:pointer;}
+.fab{display:flex;align-items:center;justify-content:center;flex-direction:column;width:64px;height:64px;background:#1a73e8;border-radius:50%;margin:16px auto 8px auto;cursor:pointer;color:white;}
+.fab .plus{font-size:22px;font-weight:300;line-height:1;}
+.fab .fab-label{font-size:8px;font-weight:600;line-height:1.3;text-align:center;}
+.bottom-nav{background:white;border-top:0.5px solid #e5e5e5;display:flex;justify-content:space-around;padding:10px 0 20px;position:sticky;bottom:0;width:100%;z-index:10;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;flex:1;}
+.nav-item i{font-size:22px;color:#8e8e93;}
+.nav-item span{font-size:10px;color:#8e8e93;}
+.nav-item.active i,.nav-item.active span{color:#1a73e8;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+
+<div class="header">
+  <div class="header-top">
+    <div class="header-left">
+      <span class="menu-icon"><i class="ti ti-menu-2" aria-hidden="true"></i></span>
+      <div class="header-title">
+        <h1>Citas</h1>
+        <p>Gestiona las citas de los pacientes</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <i class="ti ti-search" style="font-size:22px;cursor:pointer;color:#1c1c1e;" aria-hidden="true"></i>
+      <i class="ti ti-adjustments-horizontal" style="font-size:22px;cursor:pointer;color:#1c1c1e;" aria-hidden="true"></i>
+    </div>
+  </div>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-icon si-blue"><i class="ti ti-calendar" style="font-size:15px;color:#1a73e8;" aria-hidden="true"></i></div>
+    <div class="stat-info"><strong>32</strong><span>Total citas Hoy</span></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-green"><i class="ti ti-circle-check" style="font-size:15px;color:#34a853;" aria-hidden="true"></i></div>
+    <div class="stat-info"><strong>18</strong><span>Confirmadas</span></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-orange"><i class="ti ti-clock" style="font-size:15px;color:#ff9500;" aria-hidden="true"></i></div>
+    <div class="stat-info"><strong>10</strong><span>Pendientes</span></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon si-purple"><i class="ti ti-circle-x" style="font-size:15px;color:#9b59b6;" aria-hidden="true"></i></div>
+    <div class="stat-info"><strong>4</strong><span>Canceladas</span></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active">Todas</div>
+  <div class="tab">Hoy</div>
+  <div class="tab">Próximas</div>
+  <div class="tab">Completadas</div>
+  <div class="tab">Canceladas</div>
+</div>
+
+<div class="date-header">
+  <div class="date-left">
+    <i class="ti ti-calendar" style="font-size:18px;color:#636366;" aria-hidden="true"></i>
+    <span class="date-text">Martes, 21 de mayo de 2024</span>
+  </div>
+  <span class="date-count">32 citas</span>
+</div>
+
+<div class="appt-list" id="appointmentsContainer">
+  <!-- Citas dinámicas renderizadas desde localStorage -->
+</div>
+
+<div class="info-banner">
+  <i class="ti ti-info-circle" style="font-size:16px;color:#1a73e8;flex-shrink:0;" aria-hidden="true"></i>
+  <span class="info-text">Puedes ver, confirmar o reprogramar las citas desde el menú de opciones.</span>
+  <span class="info-close" id="close-banner"><i class="ti ti-x" style="font-size:15px;" aria-hidden="true"></i></span>
+</div>
+
+<div style="display:flex;align-items:center;justify-content:flex-end;padding:0 16px 12px;">
+  <div class="fab" style="cursor: pointer;" onclick="window.location.href='nueva cita.html'">
+    <span class="plus">+</span>
+    <span class="fab-label">Nueva<br>cita</span>
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item" onclick="window.location.href='panel_control.html'">
+    <i class="ti ti-home" aria-hidden="true"></i>
+    <span>Inicio</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='salud_ya_doctores.html'">
+    <i class="ti ti-user-circle" aria-hidden="true"></i>
+    <span>Doctores</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='horarios_medicos_app.html'">
+    <i class="ti ti-calendar" aria-hidden="true"></i>
+    <span>Horarios</span>
+  </div>
+  <div class="nav-item active" onclick="window.location.href='citas_medicas_app.html'">
+    <i class="ti ti-clipboard-list" aria-hidden="true"></i>
+    <span>Citas</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='pacientes_app.html'">
+    <i class="ti ti-users" aria-hidden="true"></i>
+    <span>Pacientes</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='configuraciones_app.html'">
+    <i class="ti ti-dots" aria-hidden="true"></i>
+    <span>Más</span>
+  </div>
+</div>
+
+</div>
+
+<!-- Inyectar base de datos central -->
+<script src="db.js"></script>
+<script>
+// Filter tabs logic
+let activeTab = 'Todas';
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    this.classList.add('active');
+    activeTab = this.textContent;
+    renderAppts();
+  });
+});
+
+document.getElementById('close-banner').addEventListener('click', function() {
+  this.closest('.info-banner').style.display = 'none';
+});
+
+// Render appointments dynamically
+function renderAppts() {
+  const container = document.getElementById('appointmentsContainer');
+  const appts = SaludYaDB.getAppointments() || [];
+  
+  // Filter appointments based on activeTab
+  let filtered = appts;
+  if (activeTab === 'Hoy') {
+    // Show appointments for today (in our mock, we assume 21 de mayo is today)
+    filtered = appts.filter(a => a.date.includes('21 de mayo'));
+  } else if (activeTab === 'Próximas') {
+    filtered = appts.filter(a => a.status === 'Confirmada' || a.status === 'Pendiente');
+  } else if (activeTab === 'Completadas') {
+    filtered = appts.filter(a => a.status === 'Completada');
+  } else if (activeTab === 'Canceladas') {
+    filtered = appts.filter(a => a.status === 'Cancelada');
+  }
+  
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 40px 20px; color: #8e8e93;">
+        <i class="ti ti-clipboard-off" style="font-size: 32px; color: #ccc; display: block; margin-bottom: 8px;"></i>
+        <p style="font-size: 13.5px; font-weight: 500;">No se encontraron citas en esta categoría</p>
+      </div>
+    `;
+    return;
+  }
+  
+  // Custom class maps
+  const avatarClasses = ['av-a', 'av-b', 'av-c', 'av-d', 'av-e', 'av-f'];
+  
+  container.innerHTML = filtered.map((a, i) => {
+    const initials = a.docName ? a.docName.split(' ').slice(1).map(n => n[0]).join('') : 'MD';
+    const avClass = avatarClasses[i % avatarClasses.length];
+    
+    let statusClass = 'sb-confirmed';
+    let statusIcon = 'ti-circle-check';
+    if (a.status === 'Pendiente') {
+      statusClass = 'sb-pending';
+      statusIcon = 'ti-clock';
+    } else if (a.status === 'Cancelada') {
+      statusClass = 'sb-cancelled';
+      statusIcon = 'ti-circle-x';
+    }
+    
+    return `
+      <div class="appt-row">
+        <div class="time-col">
+          <div class="time-hour ${a.status === 'Pendiente' ? 'orange' : a.status === 'Cancelada' ? 'red' : ''}">${a.time.split(' ')[0]}</div>
+          <div class="time-ampm">${a.time.split(' ')[1] || 'AM'}</div>
+        </div>
+        <div class="avatar ${avClass}">${initials}</div>
+        <div class="patient-info">
+          <div class="patient-name">${SaludYaDB.getPatient().name}</div>
+          <div class="patient-meta">${SaludYaDB.getPatient().age} años · ${SaludYaDB.getPatient().gender}</div>
+          <div class="patient-type">${a.spec}</div>
+        </div>
+        <div class="doctor-col">
+          <div class="doctor-name">${a.docName}</div>
+          <div class="doctor-spec">${a.spec}</div>
+          <span class="status-badge ${statusClass}">
+            <i class="ti ${statusIcon}" style="font-size:10px;" aria-hidden="true"></i>${a.status}
+          </span>
+        </div>
+        <span class="menu-dot" style="cursor: pointer;" onclick="cancelAppt(${a.id})"><i class="ti ti-trash" style="color: #ea4335;" aria-hidden="true"></i></span>
+      </div>
+    `;
+  }).join('');
+}
+
+// Function to cancel/delete appointment
+window.cancelAppt = function(id) {
+  if (confirm('¿Estás seguro de que deseas cancelar esta cita médica?')) {
+    let appts = SaludYaDB.getAppointments() || [];
+    appts = appts.map(a => {
+      if (a.id === id) {
+        a.status = 'Cancelada';
+      }
+      return a;
+    });
+    SaludYaDB.saveAppointments(appts);
+    renderAppts();
+  }
+}
+
+// Init view
+renderAppts();
+</script>
+</body>
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centros de Salud - Salud Ya</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f6fa;min-height:100vh;}
+.app{width:100%;max-width:1200px;margin:0 auto;background:#f5f6fa;min-height:100vh;display:flex;flex-direction:column;}
+
+/* Topbar */
+.topbar{background:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid #eee;flex-shrink:0;}
+.logo-row{display:flex;align-items:center;gap:8px;}
+.logo-txt{font-size:18px;font-weight:700;color:#1a2d5a;letter-spacing:-0.3px;}
+.logo-txt span{color:#00957a;}
+.ham{width:34px;height:34px;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:4px;cursor:pointer;border-radius:8px;border:none;background:#f5f6fa;}
+.ham span{display:block;height:2px;background:#333;border-radius:2px;}
+.ham span:last-child{width:70%;}
+.bell-wrap{position:relative;cursor:pointer;}
+.bell-badge{position:absolute;top:-4px;right:-4px;background:#00c851;color:#fff;font-size:9px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid #fff;}
+
+/* Body / content */
+.body{background:#f5f6fa;padding:16px 16px 80px;flex:1;overflow-y:auto;}
+.pg-title{font-size:22px;font-weight:800;color:#1a2d5a;}
+.pg-sub{font-size:13px;color:#888;margin-top:3px;margin-bottom:14px;}
+
+/* Search */
+.search-row{display:flex;gap:8px;margin-bottom:12px;}
+.sbox{flex:1;background:#fff;border:1px solid #e5e5e5;border-radius:24px;padding:10px 16px;display:flex;align-items:center;gap:8px;}
+.sbox input{border:none;outline:none;font-size:14px;color:#333;background:none;width:100%;}
+.sbox input::placeholder{color:#bbb;}
+.filter-btn{background:#fff;border:1px solid #e5e5e5;border-radius:24px;padding:10px 14px;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;font-weight:600;color:#333;white-space:nowrap;transition:background 0.15s;}
+.filter-btn:hover{background:#f0f0f0;}
+
+/* Location banner */
+.loc-banner{background:#fff;border:1px solid #e5e5e5;border-radius:14px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;}
+.loc-left{display:flex;align-items:center;gap:10px;}
+.loc-texts p:first-child{font-size:13px;font-weight:700;color:#1a2d5a;}
+.loc-texts p:last-child{font-size:12px;color:#888;margin-top:1px;}
+.usar-btn{display:flex;align-items:center;gap:5px;color:#2979ff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;border:none;background:none;}
+.usar-btn:hover{opacity:0.75;}
+
+/* Categories */
+.sec-lbl{font-size:14px;font-weight:700;color:#1a2d5a;margin-bottom:10px;}
+.cats-row{display:flex;gap:8px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px;scrollbar-width:none;}
+.cats-row::-webkit-scrollbar{display:none;}
+.cat-chip{flex-shrink:0;background:#fff;border:1px solid #eee;border-radius:14px;padding:10px 10px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;min-width:72px;transition:all 0.15s;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.cat-chip.active{background:#e8f0fe;border-color:#2979ff;}
+.cat-chip span{font-size:10.5px;font-weight:500;color:#555;text-align:center;line-height:1.2;}
+.cat-chip.active span{color:#2979ff;font-weight:700;}
+
+/* Centers list */
+.centers-list{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;}
+.ctr-card{background:#fff;border:0.5px solid #eee;border-radius:16px;overflow:hidden;display:flex;transition:border-color 0.15s,box-shadow 0.15s;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+.ctr-card:hover{border-color:#b0c4f0;box-shadow:0 4px 12px rgba(41,121,255,0.1);}
+.ctr-img{width:90px;flex-shrink:0;background:#d0e4f0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.ctr-body{flex:1;padding:12px;min-width:0;}
+.ctr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;}
+.ctr-name{font-size:13px;font-weight:700;color:#1a2d5a;line-height:1.3;flex:1;}
+.ctr-dist{font-size:12px;font-weight:700;color:#2979ff;white-space:nowrap;}
+.type-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin:4px 0 5px;}
+.ctr-row{display:flex;align-items:center;gap:4px;font-size:11px;color:#666;margin-bottom:2px;}
+.ctr-footer{display:flex;justify-content:space-between;align-items:center;margin-top:6px;}
+.ctr-rating{display:flex;align-items:center;gap:4px;font-size:11px;color:#555;}
+.dir-btn{background:#e8f0fe;color:#2979ff;border:none;border-radius:10px;padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;transition:background 0.15s;}
+.dir-btn:hover{background:#c5d8fa;}
+
+/* Promo */
+.promo-card{background:#fff;border:1px solid #eee;border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;margin-top:4px;}
+.promo-txt{flex:1;}
+.promo-title{font-size:13px;font-weight:700;color:#2979ff;margin-bottom:3px;}
+.promo-sub{font-size:11.5px;color:#777;line-height:1.4;}
+.promo-btn{background:#2979ff;color:#fff;border:none;border-radius:10px;padding:10px 12px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;transition:background 0.15s;}
+.promo-btn:hover{background:#1a5fd4;}
+
+/* Bottom nav */
+.bottom-nav{background:#fff;border-top:0.5px solid #e5e5e5;display:flex;justify-content:space-around;align-items:center;padding:8px 0 max(12px, env(safe-area-inset-bottom));position:fixed;bottom:0;left:0;right:0;z-index:10;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 6px;border-radius:10px;min-width:60px;flex:1;max-width:80px;}
+.nav-lbl{font-size:10px;font-weight:500;color:#aaa;}
+.nav-item.active .nav-lbl{color:#2979ff;font-weight:700;}
+.nav-item.active i{color:#2979ff;}
+.nav-item i{color:#aaa;font-size:22px;}
+
+/* Toast */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a2d5a;color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.3s;z-index:100;}
+.toast.show{opacity:1;}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:50;align-items:flex-end;justify-content:center;}
+.modal-overlay.active{display:flex;}
+.modal-sheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 18px 28px;width:100%;max-width:1200px;}
+.modal-handle{width:40px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 14px;}
+.m-name{font-size:16px;font-weight:700;color:#1a2d5a;margin-bottom:4px;}
+.m-spec{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:10px;}
+.m-row{display:flex;align-items:center;gap:6px;font-size:13px;color:#555;margin-bottom:6px;}
+.m-map{width:100%;height:90px;background:#e8f0fe;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:12px 0;color:#2979ff;font-size:13px;font-weight:600;gap:6px;cursor:pointer;}
+.m-map:hover{background:#d0e2fc;}
+.m-close{text-align:center;margin-top:10px;font-size:13px;color:#2979ff;cursor:pointer;}
+.dir-full-btn{width:100%;background:#2979ff;color:#fff;border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.15s;}
+.dir-full-btn:hover{background:#1a5fd4;}
+
+/* Responsive grid for larger screens */
+@media(min-width:768px){
+  .centers-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .cats-row{flex-wrap:wrap;}
+  .cat-chip{min-width:80px;}
+  .body{padding:20px 20px 80px;}
+}
+@media(min-width:1024px){
+  .centers-list{grid-template-columns:1fr 1fr 1fr;}
+  .topbar{padding:14px 24px;}
+  .body{padding:24px 24px 80px;}
+}
+@media(max-width:480px){
+  .ctr-img{width:70px;}
+  .pg-title{font-size:20px;}
+  .loc-banner{flex-wrap:wrap;gap:8px;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <button class="ham" onclick="showToast('Menú')" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="logo-row">
+      <svg width="26" height="26" viewBox="0 0 38 38" fill="none">
+        <circle cx="19" cy="19" r="19" fill="#00957a" opacity="0.12"/>
+        <path d="M19 6C15 6 11 9.5 11 14C11 20 19 30 19 30C19 30 27 20 27 14C27 9.5 23 6 19 6Z" fill="#00957a"/>
+        <circle cx="19" cy="10" r="3.5" fill="#1a5e8a" opacity="0.7"/>
+        <rect x="17" y="13" width="4" height="10" rx="2" fill="white"/>
+        <rect x="14" y="16" width="10" height="4" rx="2" fill="white"/>
+      </svg>
+      <span class="logo-txt">Salud <span>Ya</span></span>
+    </div>
+    <div class="bell-wrap" onclick="showToast('3 notificaciones nuevas')">
+      <i class="ti ti-bell" style="font-size:22px;color:#333;" aria-hidden="true"></i>
+      <div class="bell-badge">3</div>
+    </div>
+  </div>
+
+  <div class="body">
+    <p class="pg-title">Centros de salud</p>
+    <p class="pg-sub">Encuentra centros de salud cerca de ti</p>
+
+    <div class="search-row">
+      <div class="sbox">
+        <i class="ti ti-search" style="font-size:16px;color:#bbb;" aria-hidden="true"></i>
+        <input type="text" placeholder="Buscar centro de salud" id="searchInput" oninput="filterCenters()"/>
+      </div>
+      <button class="filter-btn" onclick="showToast('Filtros avanzados')">
+        <i class="ti ti-adjustments-horizontal" style="font-size:16px;" aria-hidden="true"></i>
+        Filtros
+      </button>
+    </div>
+
+    <div class="loc-banner">
+      <div class="loc-left">
+        <i class="ti ti-map-pin" style="font-size:22px;color:#2979ff;" aria-hidden="true"></i>
+        <div class="loc-texts">
+          <p>Mi ubicación actual</p>
+          <p>Av. Siempre Viva 123, Ciudad</p>
+        </div>
+      </div>
+      <button class="usar-btn" onclick="showToast('Usando tu ubicación GPS...')">
+        <i class="ti ti-current-location" style="font-size:14px;" aria-hidden="true"></i>
+        Usar mi ubicación
+      </button>
+    </div>
+
+    <p class="sec-lbl">Categorías</p>
+    <div class="cats-row" id="catsRow">
+      <div class="cat-chip active" onclick="filterCat('all',this)">
+        <i class="ti ti-layout-grid" style="font-size:22px;color:#2979ff;" aria-hidden="true"></i>
+        <span>Todos</span>
+      </div>
+      <div class="cat-chip" onclick="filterCat('Hospital',this)">
+        <i class="ti ti-building-hospital" style="font-size:22px;color:#555;" aria-hidden="true"></i>
+        <span>Hospitales</span>
+      </div>
+      <div class="cat-chip" onclick="filterCat('Centro de salud',this)">
+        <i class="ti ti-heart-plus" style="font-size:22px;color:#555;" aria-hidden="true"></i>
+        <span>Centros</span>
+      </div>
+      <div class="cat-chip" onclick="filterCat('Puesto de salud',this)">
+        <i class="ti ti-home-heart" style="font-size:22px;color:#555;" aria-hidden="true"></i>
+        <span>Puestos</span>
+      </div>
+      <div class="cat-chip" onclick="filterCat('Laboratorio',this)">
+        <i class="ti ti-flask" style="font-size:22px;color:#555;" aria-hidden="true"></i>
+        <span>Laboratorios</span>
+      </div>
+    </div>
+
+    <p class="sec-lbl">Centros cercanos</p>
+    <div class="centers-list" id="centersList"></div>
+
+    <div class="promo-card">
+      <i class="ti ti-map-2" style="font-size:40px;color:#2979ff;flex-shrink:0;" aria-hidden="true"></i>
+      <div class="promo-txt">
+        <p class="promo-title">¿No encuentras lo que buscas?</p>
+        <p class="promo-sub">Prueba ampliando tu búsqueda o cambiando los filtros.</p>
+      </div>
+      <button class="promo-btn" onclick="showToast('Abriendo mapa...')">
+        <i class="ti ti-map" style="font-size:14px;" aria-hidden="true"></i>
+        Ver mapa
+      </button>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='saludya_app.html'">
+      <i class="ti ti-home" aria-hidden="true"></i><span class="nav-lbl">Inicio</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='salud_ya_medicos_screen.html'">
+      <i class="ti ti-stethoscope" aria-hidden="true"></i><span class="nav-lbl">Médicos</span>
+    </div>
+    <div class="nav-item active">
+      <i class="ti ti-map-pin" aria-hidden="true"></i><span class="nav-lbl">Centros</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='salud_ya_asistente_ia.html'">
+      <i class="ti ti-robot" aria-hidden="true"></i><span class="nav-lbl">Asistente</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='salud_ya_perfil.html'">
+      <i class="ti ti-user" aria-hidden="true"></i><span class="nav-lbl">Perfil</span>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal-sheet" id="modalContent"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const centers = [
+  {
+    name:'Centro de Salud San Martín',
+    type:'Centro de salud',
+    typeBg:'#e8f5e9',typeColor:'#2e7d32',
+    addr:'Av. San Martín 456, Ciudad',
+    hours:'Lun - Vie: 7:00 AM - 7:00 PM',
+    rating:'4.6',reviews:'128',
+    dist:'0.8 km',
+    icon:'ti-building-community'
+  },
+  {
+    name:'Hospital General del Norte',
+    type:'Hospital',
+    typeBg:'#e3f2fd',typeColor:'#1565c0',
+    addr:'Calle Los Pinos 789, Ciudad',
+    hours:'Atención 24/7',
+    rating:'4.4',reviews:'256',
+    dist:'2.3 km',
+    icon:'ti-building-hospital'
+  },
+  {
+    name:'Puesto de Salud El Progreso',
+    type:'Puesto de salud',
+    typeBg:'#fce4ec',typeColor:'#880e4f',
+    addr:'Jr. El Progreso 321, Ciudad',
+    hours:'Lun - Vie: 8:00 AM - 4:00 PM',
+    rating:'4.2',reviews:'64',
+    dist:'3.1 km',
+    icon:'ti-home-heart'
+  },
+  {
+    name:'Laboratorio Médico Central',
+    type:'Laboratorio',
+    typeBg:'#ede7f6',typeColor:'#4527a0',
+    addr:'Jr. Lima 100, Ciudad',
+    hours:'Lun - Sab: 7:00 AM - 5:00 PM',
+    rating:'4.5',reviews:'89',
+    dist:'1.5 km',
+    icon:'ti-flask'
+  },
+];
+
+let activeFilter = 'all';
+let searchQ = '';
+
+function buildCard(c, idx){
+  return `<div class="ctr-card" onclick="openDetail(${idx})">
+    <div class="ctr-img" style="background:${c.typeBg};min-height:90px;">
+      <i class="ti ${c.icon}" style="font-size:38px;color:${c.typeColor};opacity:0.7;" aria-hidden="true"></i>
+    </div>
+    <div class="ctr-body">
+      <div class="ctr-top">
+        <p class="ctr-name">${c.name}</p>
+        <span class="ctr-dist">${c.dist}</span>
+      </div>
+      <span class="type-badge" style="background:${c.typeBg};color:${c.typeColor};">${c.type}</span>
+      <div class="ctr-row">
+        <i class="ti ti-map-pin" style="font-size:12px;color:#888;" aria-hidden="true"></i>
+        ${c.addr}
+      </div>
+      <div class="ctr-row">
+        <i class="ti ti-clock" style="font-size:12px;color:#888;" aria-hidden="true"></i>
+        ${c.hours}
+      </div>
+      <div class="ctr-footer">
+        <div class="ctr-rating">
+          <i class="ti ti-star-filled" style="font-size:12px;color:#f4b400;" aria-hidden="true"></i>
+          ${c.rating} (${c.reviews})
+        </div>
+        <button class="dir-btn" onclick="event.stopPropagation();showToast('Abriendo ruta...')">
+          <i class="ti ti-navigation" style="font-size:12px;" aria-hidden="true"></i>
+          Cómo llegar
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderCenters(){
+  const list = document.getElementById('centersList');
+  const q = searchQ.toLowerCase();
+  const filtered = centers.filter(c => {
+    const matchCat = activeFilter === 'all' || c.type === activeFilter;
+    const matchQ = !q || c.name.toLowerCase().includes(q) || c.type.toLowerCase().includes(q) || c.addr.toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+  if(!filtered.length){
+    list.innerHTML='<p style="text-align:center;color:#aaa;font-size:14px;padding:24px 0;grid-column:1/-1;">No se encontraron centros</p>';
+    return;
+  }
+  list.innerHTML = filtered.map((c)=> buildCard(c, centers.indexOf(c))).join('');
+}
+
+function filterCat(cat, el){
+  document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  activeFilter = cat;
+  renderCenters();
+}
+
+function filterCenters(){
+  searchQ = document.getElementById('searchInput').value;
+  renderCenters();
+}
+
+function openDetail(idx){
+  const c = centers[idx];
+  const content = document.getElementById('modalContent');
+  content.innerHTML = `
+    <div class="modal-handle"></div>
+    <div style="width:100%;height:80px;background:${c.typeBg};border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;">
+      <i class="ti ${c.icon}" style="font-size:42px;color:${c.typeColor};" aria-hidden="true"></i>
+    </div>
+    <p class="m-name">${c.name}</p>
+    <span class="m-spec" style="background:${c.typeBg};color:${c.typeColor};">${c.type}</span>
+    <div class="m-row"><i class="ti ti-map-pin" style="font-size:14px;color:#888;" aria-hidden="true"></i>${c.addr}</div>
+    <div class="m-row"><i class="ti ti-clock" style="font-size:14px;color:#888;" aria-hidden="true"></i>${c.hours}</div>
+    <div class="m-row">
+      <i class="ti ti-star-filled" style="font-size:14px;color:#f4b400;" aria-hidden="true"></i>
+      ${c.rating} (${c.reviews} reseñas) · <span style="color:#2979ff;font-weight:600;">${c.dist}</span>
+    </div>
+    <div class="m-map" onclick="showToast('Abriendo Google Maps...')">
+      <i class="ti ti-map-2" style="font-size:18px;" aria-hidden="true"></i>
+      Ver en el mapa
+    </div>
+    <button class="dir-full-btn" onclick="showToast('Calculando ruta...')">
+      <i class="ti ti-navigation" style="font-size:16px;" aria-hidden="true"></i>
+      Cómo llegar
+    </button>
+    <p class="m-close" onclick="document.getElementById('detailModal').classList.remove('active')">Cerrar</p>
+  `;
+  document.getElementById('detailModal').classList.add('active');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+renderCenters();
+</script>
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reportes – Salud Ya</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body {
+  background: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+.app {
+  background: #f0f2f5;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: -apple-system, 'SF Pro Display', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 769px) {
+  .app {
+    min-height: calc(100vh - 40px);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+  body { padding: 20px !important; }
+  .stats-grid {
+    grid-template-columns: 1fr 1fr 1fr 1fr !important;
+  }
+}
+@media (max-width: 768px) {
+  body { padding: 0 !important; }
+  .app { border-radius: 0 !important; }
+}
+.top-header{background:#1a56db;padding:10px 20px 22px;display:flex;align-items:center;justify-content:space-between;width:100%;}
+
+.top-header h1{font-size:22px;font-weight:700;color:white;flex:1;text-align:center;}
+.top-header i{font-size:24px;color:white;cursor:pointer;}
+.content{background:#f0f2f5;border-radius:20px 20px 0 0;margin-top:-2px;padding:16px 14px 0;}
+.section-title{font-size:15px;font-weight:700;color:#1c1c1e;margin-bottom:10px;}
+.date-picker{background:white;border:0.5px solid #e0e0e0;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;cursor:pointer;}
+.date-picker span{font-size:14px;color:#1c1c1e;display:flex;align-items:center;gap:8px;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.stat-card{background:white;border-radius:12px;padding:14px;display:flex;align-items:flex-start;gap:12px;}
+.st-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.st-blue{background:#e8f0fe;}
+.st-green{background:#e6f4ea;}
+.st-orange{background:#fff3e0;}
+.st-purple{background:#f3e8fd;}
+.st-label{font-size:11px;color:#8e8e93;margin-bottom:2px;}
+.st-value{font-size:24px;font-weight:700;color:#1c1c1e;line-height:1.1;}
+.st-change{font-size:11px;margin-top:3px;display:flex;align-items:center;gap:2px;}
+.up{color:#34a853;}
+.down{color:#ea4335;}
+.chart-card{background:white;border-radius:14px;padding:14px;margin-bottom:14px;}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.chart-label{font-size:14px;font-weight:600;color:#1c1c1e;}
+.chart-selector{background:#f5f5f7;border:0.5px solid #e0e0e0;border-radius:8px;padding:5px 10px;font-size:12px;color:#1c1c1e;display:flex;align-items:center;gap:4px;cursor:pointer;}
+.donut-card{background:white;border-radius:14px;padding:16px;margin-bottom:14px;}
+.donut-row{display:flex;align-items:center;gap:16px;}
+.donut-wrap{position:relative;width:140px;height:140px;flex-shrink:0;}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.donut-center strong{font-size:20px;font-weight:700;color:#1c1c1e;display:block;line-height:1;}
+.donut-center span{font-size:11px;color:#8e8e93;}
+.legend{display:flex;flex-direction:column;gap:10px;}
+.leg-item{display:flex;align-items:center;gap:8px;}
+.leg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.leg-name{font-size:13px;color:#1c1c1e;flex:1;}
+.leg-val{font-size:13px;color:#636366;}
+.reports-section{background:white;border-radius:14px;margin-bottom:20px;overflow:hidden;}
+.report-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:0.5px solid #f0f0f5;cursor:pointer;}
+.report-item:last-child{border-bottom:none;}
+.rep-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ri-blue{background:#1a56db;}
+.ri-green{background:#34a853;}
+.ri-purple{background:#8b4fb8;}
+.ri-orange{background:#ff9500;}
+.rep-text{flex:1;}
+.rep-name{font-size:14px;font-weight:600;color:#1c1c1e;}
+.rep-sub{font-size:11px;color:#8e8e93;}
+.bottom-nav{background:white;border-top:0.5px solid #e5e5e5;display:flex;justify-content:space-around;padding:10px 0 20px;position:sticky;bottom:0;width:100%;z-index:10;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;flex:1;}
+.nav-item i{font-size:22px;color:#8e8e93;}
+.nav-item span{font-size:10px;color:#8e8e93;}
+.nav-item.active i,.nav-item.active span{color:#1a73e8;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+
+<div class="top-header">
+  <i class="ti ti-arrow-left" style="cursor:pointer;" onclick="window.location.href='panel_control.html'" aria-hidden="true"></i>
+  <h1>Reportes</h1>
+  <i class="ti ti-adjustments-horizontal" aria-hidden="true"></i>
+</div>
+
+<div class="content">
+
+  <div class="section-title">Rango de fechas</div>
+  <div class="date-picker">
+    <span>
+      <i class="ti ti-calendar" style="font-size:16px;color:#636366;" aria-hidden="true"></i>
+      1 may. 2024 - 31 may. 2024
+    </span>
+    <i class="ti ti-chevron-down" style="font-size:18px;color:#636366;" aria-hidden="true"></i>
+  </div>
+
+  <div class="section-title">Resumen general</div>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="st-icon st-blue"><i class="ti ti-calendar" style="font-size:22px;color:#1a56db;" aria-hidden="true"></i></div>
+      <div>
+        <div class="st-label">Citas totales</div>
+        <div class="st-value">320</div>
+        <div class="st-change up"><i class="ti ti-arrow-up" style="font-size:10px;"></i>12% vs. abril</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="st-icon st-green"><i class="ti ti-circle-check" style="font-size:22px;color:#34a853;" aria-hidden="true"></i></div>
+      <div>
+        <div class="st-label">Citas completadas</div>
+        <div class="st-value">245</div>
+        <div class="st-change up"><i class="ti ti-arrow-up" style="font-size:10px;"></i>15% vs. abril</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="st-icon st-orange"><i class="ti ti-clock" style="font-size:22px;color:#ff9500;" aria-hidden="true"></i></div>
+      <div>
+        <div class="st-label">Citas pendientes</div>
+        <div class="st-value">48</div>
+        <div class="st-change down"><i class="ti ti-arrow-down" style="font-size:10px;"></i>8% vs. abril</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="st-icon st-purple"><i class="ti ti-circle-x" style="font-size:22px;color:#8b4fb8;" aria-hidden="true"></i></div>
+      <div>
+        <div class="st-label">Citas canceladas</div>
+        <div class="st-value">27</div>
+        <div class="st-change down"><i class="ti ti-arrow-down" style="font-size:10px;"></i>10% vs. abril</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-header">
+      <span class="chart-label">Citas por día</span>
+      <div class="chart-selector">Línea <i class="ti ti-chevron-down" style="font-size:12px;" aria-hidden="true"></i></div>
+    </div>
+    <canvas id="lineChart" height="160"></canvas>
+  </div>
+
+  <div class="donut-card">
+    <div class="section-title" style="margin-bottom:14px;">Citas por estado</div>
+    <div class="donut-row">
+      <div class="donut-wrap">
+        <canvas id="donutChart" width="140" height="140"></canvas>
+        <div class="donut-center">
+          <strong>320</strong>
+          <span>Total</span>
+        </div>
+      </div>
+      <div class="legend">
+        <div class="leg-item">
+          <div class="leg-dot" style="background:#1a56db;"></div>
+          <span class="leg-name">Completadas</span>
+          <span class="leg-val">245 (76.6%)</span>
+        </div>
+        <div class="leg-item">
+          <div class="leg-dot" style="background:#ff9500;"></div>
+          <span class="leg-name">Pendientes</span>
+          <span class="leg-val">48 (15%)</span>
+        </div>
+        <div class="leg-item">
+          <div class="leg-dot" style="background:#ea4335;"></div>
+          <span class="leg-name">Canceladas</span>
+          <span class="leg-val">27 (8.4%)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Reportes disponibles</div>
+  <div class="reports-section">
+    <div class="report-item">
+      <div class="rep-icon ri-blue"><i class="ti ti-chart-bar" style="font-size:20px;color:white;" aria-hidden="true"></i></div>
+      <div class="rep-text">
+        <div class="rep-name">Reporte de citas</div>
+        <div class="rep-sub">Resumen detallado de citas</div>
+      </div>
+      <i class="ti ti-chevron-right" style="font-size:18px;color:#c7c7cc;" aria-hidden="true"></i>
+    </div>
+    <div class="report-item">
+      <div class="rep-icon ri-green"><i class="ti ti-users" style="font-size:20px;color:white;" aria-hidden="true"></i></div>
+      <div class="rep-text">
+        <div class="rep-name">Reporte de pacientes</div>
+        <div class="rep-sub">Pacientes nuevos y frecuentes</div>
+      </div>
+      <i class="ti ti-chevron-right" style="font-size:18px;color:#c7c7cc;" aria-hidden="true"></i>
+    </div>
+    <div class="report-item">
+      <div class="rep-icon ri-purple"><i class="ti ti-user-circle" style="font-size:20px;color:white;" aria-hidden="true"></i></div>
+      <div class="rep-text">
+        <div class="rep-name">Reporte de doctores</div>
+        <div class="rep-sub">Rendimiento por doctor</div>
+      </div>
+      <i class="ti ti-chevron-right" style="font-size:18px;color:#c7c7cc;" aria-hidden="true"></i>
+    </div>
+    <div class="report-item">
+      <div class="rep-icon ri-orange"><i class="ti ti-currency-dollar" style="font-size:20px;color:white;" aria-hidden="true"></i></div>
+      <div class="rep-text">
+        <div class="rep-name">Reporte de ingresos</div>
+        <div class="rep-sub">Ingresos y métodos de pago</div>
+      </div>
+      <i class="ti ti-chevron-right" style="font-size:18px;color:#c7c7cc;" aria-hidden="true"></i>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item" onclick="window.location.href='panel_control.html'">
+    <i class="ti ti-home" aria-hidden="true"></i>
+    <span>Inicio</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='salud_ya_doctores.html'">
+    <i class="ti ti-user-circle" aria-hidden="true"></i>
+    <span>Doctores</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='horarios_medicos_app.html'">
+    <i class="ti ti-calendar" aria-hidden="true"></i>
+    <span>Horarios</span>
+  </div>
+  <div class="nav-item active" onclick="window.location.href='reportes_app.html'">
+    <i class="ti ti-clipboard-list" aria-hidden="true"></i>
+    <span>Reportes</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='pacientes_app.html'">
+    <i class="ti ti-user" aria-hidden="true"></i>
+    <span>Pacientes</span>
+  </div>
+  <div class="nav-item" onclick="window.location.href='configuraciones_app.html'">
+    <i class="ti ti-dots" aria-hidden="true"></i>
+    <span>Más</span>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const days=[1,7,14,21,31];
+const labels=['1 may.','7 may.','14 may.','21 may.','31 may.'];
+const allData=[28,38,45,60,65,55,52,50,35,40,42,44,58,60,62,65];
+const lc=document.getElementById('lineChart');
+new Chart(lc,{
+  type:'line',
+  data:{
+    labels:['1','3','5','7','9','11','13','15','17','19','21','23','25','27','29','31'],
+    datasets:[{
+      data:[28,34,38,45,48,60,65,55,30,40,42,44,50,58,42,65],
+      borderColor:'#1a56db',
+      backgroundColor:'rgba(26,86,219,0.08)',
+      borderWidth:2,
+      pointBackgroundColor:'#1a56db',
+      pointRadius:3,
+      fill:true,
+      tension:0.3
+    }]
+  },
+  options:{
+    responsive:true,
+    plugins:{legend:{display:false},tooltip:{enabled:true}},
+    scales:{
+      x:{
+        grid:{display:false},
+        ticks:{
+          color:'#8e8e93',
+          font:{size:10},
+          maxTicksLimit:5,
+          callback:function(val,i){
+            const map={0:'1 may.',4:'7 may.',8:'14 may.',11:'21 may.',15:'31 may.'};
+            return map[i]||'';
+          }
+        },
+        border:{display:false}
+      },
+      y:{
+        min:0,max:80,
+        ticks:{color:'#8e8e93',font:{size:10},stepSize:20},
+        grid:{color:'rgba(0,0,0,0.05)'},
+        border:{display:false}
+      }
+    }
+  }
+});
+
+const dc=document.getElementById('donutChart');
+new Chart(dc,{
+  type:'doughnut',
+  data:{
+    datasets:[{
+      data:[245,48,27],
+      backgroundColor:['#1a56db','#ff9500','#ea4335'],
+      borderWidth:0,
+      hoverOffset:4
+    }]
+  },
+  options:{
+    cutout:'68%',
+    plugins:{legend:{display:false},tooltip:{enabled:false}},
+    responsive:false
+  }
+});
+
+</script>

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doctores – Salud Ya</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.app { background: #f5f5f7; width: 100%; max-width: 1200px; min-height: 100vh; margin: 0 auto; position: relative; font-family: -apple-system, 'Segoe UI', sans-serif; }
+
+.topbar { background: #fff; padding: 14px 18px 12px; display: flex; align-items: center; gap: 12px; border-bottom: 0.5px solid #e8eaed; }
+.back-btn { background: none; border: none; font-size: 20px; color: #1a1a2e; cursor: pointer; flex-shrink: 0; }
+.topbar-text { flex: 1; }
+.topbar-title { font-size: 20px; font-weight: 800; color: #1a1a2e; }
+.topbar-sub { font-size: 12px; color: #6c757d; margin-top: 1px; }
+.topbar-actions { display: flex; gap: 10px; }
+.icon-btn { background: none; border: none; font-size: 20px; color: #444; cursor: pointer; }
+
+.content { padding: 16px 14px 100px; }
+
+/* Summary cards */
+.summary-row { display: flex; gap: 8px; margin-bottom: 18px; }
+.sum-card { flex: 1; background: #fff; border-radius: 14px; border: 0.5px solid #e8eaed; padding: 12px 10px; display: flex; align-items: center; gap: 10px; }
+.sum-icon { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.si-purple { background: #eeedfe; color: #7f77dd; }
+.si-green  { background: #e1f5ee; color: #26a269; }
+.si-amber  { background: #faeeda; color: #ba7517; }
+.sum-info {}
+.sum-num { font-size: 20px; font-weight: 800; color: #1a1a2e; line-height: 1; }
+.sum-label { font-size: 10px; color: #6c757d; margin-top: 3px; line-height: 1.3; }
+
+/* Tabs */
+.tabs { display: flex; gap: 0; border-bottom: 1.5px solid #e8eaed; margin-bottom: 14px; }
+.tab { font-size: 13px; color: #6c757d; padding: 9px 10px; cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; margin-bottom: -1.5px; font-weight: 500; flex: 1; text-align: center; }
+.tab.active { color: #2563eb; border-bottom: 2px solid #2563eb; font-weight: 700; }
+
+/* Doctor list */
+.doctor-list { background: #fff; border-radius: 16px; border: 0.5px solid #e8eaed; overflow: hidden; }
+.doctor-row { display: flex; align-items: center; gap: 12px; padding: 14px 14px; border-bottom: 0.5px solid #f0f2f4; }
+.doctor-row:last-child { border-bottom: none; }
+.doc-avatar-wrap { position: relative; flex-shrink: 0; }
+.doc-avatar { width: 58px; height: 58px; border-radius: 50%; background: #e0e8f0; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; color: #4a6fa5; overflow: hidden; border: 2px solid #e8eaed; }
+.doc-avatar span { font-size: 18px; font-weight: 700; }
+.online-dot { position: absolute; bottom: 2px; right: 2px; width: 13px; height: 13px; border-radius: 50%; background: #22c55e; border: 2px solid #fff; }
+.doc-info { flex: 1; min-width: 0; }
+.doc-name { font-size: 14px; font-weight: 800; color: #1a1a2e; }
+.doc-spec { font-size: 12px; color: #6c757d; margin-top: 2px; }
+.doc-cmp  { font-size: 11px; color: #a0aec0; margin-top: 2px; }
+.doc-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+.badge { font-size: 11px; font-weight: 700; padding: 4px 11px; border-radius: 20px; }
+.b-green  { background: #e1f5ee; color: #16a34a; }
+.b-amber  { background: #fef3c7; color: #d97706; }
+.b-purple { background: #eeedfe; color: #7f77dd; }
+.doc-time { font-size: 10px; color: #6c757d; }
+.more-btn { background: none; border: none; font-size: 18px; color: #b0bac9; cursor: pointer; padding: 0 2px; align-self: center; }
+
+/* FAB */
+.fab { position: fixed; bottom: 80px; right: calc(50% - 195px + 14px); width: 66px; height: 66px; background: #2563eb; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(37,99,235,0.35); cursor: pointer; border: none; color: #fff; z-index: 10; }
+.fab i { font-size: 20px; margin-bottom: 1px; }
+.fab span { font-size: 9px; font-weight: 700; text-align: center; line-height: 1.2; }
+
+/* Bottom nav */
+.bottom-nav { background: #fff; border-top: 0.5px solid #e8eaed; display: flex; padding: 8px 0 10px; position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 390px; z-index: 5; }
+@media(max-width:500px){
+  .app{max-width:100vw!important;}
+  .bottom-nav{width:100%!important;left:0!important;transform:none!important;}
+  .fab{right:14px!important;}
+}
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 0; }
+.nav-icon { font-size: 22px; color: #aaa; }
+.nav-label { font-size: 10px; color: #aaa; font-weight: 500; }
+.nav-item.active .nav-icon { color: #2563eb; }
+.nav-item.active .nav-label { color: #2563eb; font-weight: 700; }
+
+/* Modal overlay and sheet styling */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.active {
+  display: flex;
+}
+.modal-sheet {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px 20px;
+  width: 90%;
+  max-width: 350px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  animation: slideUp 0.3s ease;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+.modal-sub {
+  font-size: 12px;
+  color: #8e8e93;
+  margin-bottom: 16px;
+}
+.field-lbl {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 5px;
+  display: block;
+}
+.field-input {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #333;
+  outline: none;
+  margin-bottom: 12px;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+.field-input:focus {
+  border-color: #2563eb;
+}
+.modal-save-btn {
+  width: 100%;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.15s;
+}
+.modal-save-btn:hover {
+  background: #1d4ed8;
+}
+.modal-cancel-txt {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #2563eb;
+  cursor: pointer;
+}
+.toast {
+  position: fixed;
+  bottom: 85px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a2e;
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 200;
+  white-space: nowrap;
+}
+.toast.show {
+  opacity: 1;
+}
+
+/* Context/dropdown menu style for doctor editing */
+.ctx-menu {
+  position: absolute;
+  right: 14px;
+  background: #fff;
+  border: 1.5px solid #e8eaed;
+  border-radius: 12px;
+  padding: 6px 0;
+  z-index: 60;
+  min-width: 140px;
+  display: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.ctx-menu.show {
+  display: block;
+}
+.ctx-item {
+  padding: 9px 16px;
+  font-size: 13px;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ctx-item:hover {
+  background: #f4f6f9;
+}
+.ctx-item.danger {
+  color: #ef4444;
+}
+</style>
+
+<div class="app">
+  <!-- Topbar -->
+  <div class="topbar">
+    <button class="back-btn" aria-label="Volver"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>
+    <div class="topbar-text">
+      <div class="topbar-title">Doctores</div>
+      <div class="topbar-sub">Gestiona el equipo médico</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" aria-label="Buscar"><i class="ti ti-search" aria-hidden="true"></i></button>
+      <button class="icon-btn" aria-label="Filtrar"><i class="ti ti-filter" aria-hidden="true"></i></button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- Summary -->
+    <div class="summary-row">
+      <div class="sum-card">
+        <div class="sum-icon si-purple"><i class="ti ti-users" aria-hidden="true"></i></div>
+        <div class="sum-info">
+          <div class="sum-num">48</div>
+          <div class="sum-label">Total doctores<br>Activos</div>
+        </div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-icon si-green"><i class="ti ti-circle-check" aria-hidden="true"></i></div>
+        <div class="sum-info">
+          <div class="sum-num">42</div>
+          <div class="sum-label">Doctores<br>activos</div>
+        </div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-icon si-amber"><i class="ti ti-clock" aria-hidden="true"></i></div>
+        <div class="sum-info">
+          <div class="sum-num">6</div>
+          <div class="sum-label">Inactivos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" onclick="setTab(this)">Todos</div>
+      <div class="tab" onclick="setTab(this)">Activos</div>
+      <div class="tab" onclick="setTab(this)">Inactivos</div>
+      <div class="tab" onclick="setTab(this)">Por especialidad</div>
+    </div>
+
+    <!-- Doctor list -->
+    <div class="doctor-list" id="doctorContainer"></div>
+  </div>
+
+  <!-- FAB -->
+  <button class="fab" aria-label="Agregar doctor" onclick="openAddModal()">
+    <i class="ti ti-plus" aria-hidden="true"></i>
+    <span>Agregar<br>doctor</span>
+  </button>
+
+  <!-- ADD DOCTOR MODAL -->
+  <div class="modal-overlay" id="addDoctorModal">
+    <div class="modal-sheet">
+      <div class="modal-title">Agregar doctor</div>
+      <div class="modal-sub">Ingresa la información del nuevo médico</div>
+      
+      <label class="field-lbl">Nombre del doctor</label>
+      <input class="field-input" type="text" id="newDocName" placeholder="Ej: Dra. Elena Varela"/>
+      
+      <label class="field-lbl">Especialidad</label>
+      <input class="field-input" type="text" id="newDocSpec" placeholder="Ej: Medicina General"/>
+      
+      <label class="field-lbl">CMP</label>
+      <input class="field-input" type="text" id="newDocCmp" placeholder="Ej: CMP 123456"/>
+      
+      <label class="field-lbl">Estado</label>
+      <select class="field-input" id="newDocStatus">
+        <option>Disponible</option>
+        <option>En consulta</option>
+        <option>No disponible</option>
+      </select>
+      
+      <label class="field-lbl">Horario</label>
+      <input class="field-input" type="text" id="newDocTime" placeholder="Ej: Hoy 8:00 AM – 5:00 PM"/>
+      
+      <button class="modal-save-btn" onclick="saveDoctor()">Guardar doctor</button>
+      <p class="modal-cancel-txt" onclick="closeAddModal()">Cancelar</p>
+    </div>
+  </div>
+
+  <!-- EDIT DOCTOR MODAL -->
+  <div class="modal-overlay" id="editDoctorModal">
+    <div class="modal-sheet">
+      <div class="modal-title">Editar doctor</div>
+      <div class="modal-sub">Actualiza los datos del médico</div>
+      <input type="hidden" id="editDocId"/>
+      
+      <label class="field-lbl">Nombre del doctor</label>
+      <input class="field-input" type="text" id="editDocName"/>
+      
+      <label class="field-lbl">Especialidad</label>
+      <input class="field-input" type="text" id="editDocSpec"/>
+      
+      <label class="field-lbl">CMP</label>
+      <input class="field-input" type="text" id="editDocCmp"/>
+      
+      <label class="field-lbl">Estado</label>
+      <select class="field-input" id="editDocStatus">
+        <option>Disponible</option>
+        <option>En consulta</option>
+        <option>No disponible</option>
+      </select>
+      
+      <label class="field-lbl">Horario</label>
+      <input class="field-input" type="text" id="editDocTime"/>
+      
+      <button class="modal-save-btn" onclick="updateDoctor()">Guardar cambios</button>
+      <p class="modal-cancel-txt" onclick="closeEditModal()">Cancelar</p>
+    </div>
+  </div>
+
+  <!-- CONTEXT MENU -->
+  <div class="ctx-menu" id="ctxMenu">
+    <div class="ctx-item" onclick="ctxAction('editar')"><i class="ti ti-edit" style="font-size:15px;" aria-hidden="true"></i> Editar</div>
+    <div class="ctx-item danger" onclick="ctxAction('eliminar')"><i class="ti ti-trash" style="font-size:15px;" aria-hidden="true"></i> Eliminar</div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Bottom nav -->
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='panel_control.html'">
+      <span class="nav-icon"><i class="ti ti-home" aria-hidden="true"></i></span>
+      <span class="nav-label">Inicio</span>
+    </div>
+    <div class="nav-item active">
+      <span class="nav-icon"><i class="ti ti-user-circle" aria-hidden="true"></i></span>
+      <span class="nav-label">Doctores</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='horarios_medicos_app.html'">
+      <span class="nav-icon"><i class="ti ti-calendar" aria-hidden="true"></i></span>
+      <span class="nav-label">Horarios</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='reportes_app.html'">
+      <span class="nav-icon"><i class="ti ti-clipboard-list" aria-hidden="true"></i></span>
+      <span class="nav-label">Reportes</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='pacientes_app.html'">
+      <span class="nav-icon"><i class="ti ti-user" aria-hidden="true"></i></span>
+      <span class="nav-label">Pacientes</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='configuraciones_app.html'">
+      <span class="nav-icon"><i class="ti ti-dots" aria-hidden="true"></i></span>
+      <span class="nav-label">Más</span>
+    </div>
+  </div>
+</div>
+
+<script src="db.js"></script>
+<script>
+let doctorsList = [];
+let activeTab = 'Todos';
+let ctxTargetId = null;
+
+function loadDoctors() {
+  if (typeof SaludYaDB !== 'undefined') {
+    doctorsList = SaludYaDB.getDoctors() || [];
+  }
+  renderDoctors();
+}
+
+function renderDoctors() {
+  const container = document.getElementById('doctorContainer');
+  if(!container) return;
+
+  // Filter
+  let filtered = doctorsList;
+  if (activeTab === 'Activos') {
+    filtered = doctorsList.filter(d => d.status === 'Disponible' || d.status === 'En consulta');
+  } else if (activeTab === 'Inactivos') {
+    filtered = doctorsList.filter(d => d.status === 'No disponible');
+  }
+  
+  if (filtered.length === 0) {
+    container.innerHTML = `<p style="text-align:center;color:#aaa;font-size:13px;padding:24px 0;">No se encontraron doctores</p>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(d => {
+    let badgeClass = 'b-green';
+    if (d.status === 'En consulta') badgeClass = 'b-amber';
+    else if (d.status === 'No disponible') badgeClass = 'b-purple';
+
+    const initials = d.initials || d.name.split(' ').slice(1).map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const bg = d.bg || '#dce9fb';
+    const tc = d.tc || '#2563eb';
+    const isOnline = d.status !== 'No disponible';
+
+    return `<div class="doctor-row" id="docRow-${d.id}">
+      <div class="doc-avatar-wrap">
+        <div class="doc-avatar" style="background:${bg};color:${tc};"><span>${initials}</span></div>
+        ${isOnline ? '<span class="online-dot"></span>' : '<span class="online-dot" style="background:#d1d5db;"></span>'}
+      </div>
+      <div class="doc-info">
+        <div class="doc-name">${d.name}</div>
+        <div class="doc-spec">${d.spec}</div>
+        <div class="doc-cmp">${d.cmp}</div>
+      </div>
+      <div class="doc-right">
+        <span class="badge ${badgeClass}">${d.status}</span>
+        <span class="doc-time">${d.time || 'Inactivo'}</span>
+      </div>
+      <button class="more-btn" aria-label="Más opciones" onclick="openCtx(event, ${d.id})"><i class="ti ti-dots-vertical" aria-hidden="true"></i></button>
+    </div>`;
+  }).join('');
+}
+
+function setTab(el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  activeTab = el.textContent;
+  renderDoctors();
+}
+
+function openAddModal() {
+  document.getElementById('newDocName').value = '';
+  document.getElementById('newDocSpec').value = '';
+  document.getElementById('newDocCmp').value = '';
+  document.getElementById('newDocStatus').value = 'Disponible';
+  document.getElementById('newDocTime').value = 'Hoy 8:00 AM – 5:00 PM';
+  document.getElementById('addDoctorModal').classList.add('active');
+}
+
+function closeAddModal() {
+  document.getElementById('addDoctorModal').classList.remove('active');
+}
+
+function saveDoctor() {
+  const name = document.getElementById('newDocName').value.trim();
+  const spec = document.getElementById('newDocSpec').value.trim();
+  const cmp = document.getElementById('newDocCmp').value.trim();
+  const status = document.getElementById('newDocStatus').value;
+  const time = document.getElementById('newDocTime').value.trim();
+
+  if(!name || !spec || !cmp || !time) {
+    showToast('Por favor completa todos los campos.');
+    return;
+  }
+
+  const initials = name.split(' ').slice(1).map(w=>w[0]).join('').substring(0,2).toUpperCase() || 'DR';
+  
+  const colors = [
+    { bg: '#dce9fb', tc: '#2563eb' },
+    { bg: '#e0e8f5', tc: '#3b5fa0' },
+    { bg: '#e1f5ee', tc: '#26a269' },
+    { bg: '#e8edf8', tc: '#4a6fa5' },
+    { bg: '#faeeda', tc: '#ba7517' }
+  ];
+  const choice = colors[doctorsList.length % colors.length];
+
+  const newDoc = {
+    id: Date.now(),
+    name,
+    spec,
+    cmp,
+    status,
+    time,
+    initials,
+    bg: choice.bg,
+    tc: choice.tc,
+    rating: '4.8',
+    reviews: '0'
+  };
+
+  doctorsList.unshift(newDoc);
+  if (typeof SaludYaDB !== 'undefined') {
+    SaludYaDB.saveDoctors(doctorsList);
+  }
+
+  renderDoctors();
+  closeAddModal();
+  showToast('✓ Doctor agregado exitosamente');
+}
+
+function openEditModal(doc) {
+  document.getElementById('editDocId').value = doc.id;
+  document.getElementById('editDocName').value = doc.name;
+  document.getElementById('editDocSpec').value = doc.spec;
+  document.getElementById('editDocCmp').value = doc.cmp;
+  document.getElementById('editDocStatus').value = doc.status;
+  document.getElementById('editDocTime').value = doc.time || '';
+  document.getElementById('editDoctorModal').classList.add('active');
+}
+
+function closeEditModal() {
+  document.getElementById('editDoctorModal').classList.remove('active');
+}
+
+function updateDoctor() {
+  const id = parseInt(document.getElementById('editDocId').value);
+  const name = document.getElementById('editDocName').value.trim();
+  const spec = document.getElementById('editDocSpec').value.trim();
+  const cmp = document.getElementById('editDocCmp').value.trim();
+  const status = document.getElementById('editDocStatus').value;
+  const time = document.getElementById('editDocTime').value.trim();
+
+  if(!name || !spec || !cmp || !time) {
+    showToast('Por favor completa todos los campos.');
+    return;
+  }
+
+  doctorsList = doctorsList.map(d => {
+    if (d.id === id) {
+      d.name = name;
+      d.spec = spec;
+      d.cmp = cmp;
+      d.status = status;
+      d.time = time;
+      d.initials = name.split(' ').slice(1).map(w=>w[0]).join('').substring(0,2).toUpperCase() || 'DR';
+    }
+    return d;
+  });
+
+  if (typeof SaludYaDB !== 'undefined') {
+    SaludYaDB.saveDoctors(doctorsList);
+  }
+
+  renderDoctors();
+  closeEditModal();
+  showToast('✓ Doctor actualizado exitosamente');
+}
+
+function openCtx(e, id) {
+  e.stopPropagation();
+  ctxTargetId = id;
+  const menu = document.getElementById('ctxMenu');
+  const row = document.getElementById('docRow-' + id);
+  const rect = row.getBoundingClientRect();
+  const app = document.querySelector('.app');
+  const appRect = app.getBoundingClientRect();
+
+  menu.style.top = (rect.bottom - appRect.top + 4) + 'px';
+  menu.classList.add('show');
+}
+
+function ctxAction(action) {
+  const menu = document.getElementById('ctxMenu');
+  menu.classList.remove('show');
+
+  if (action === 'eliminar' && ctxTargetId !== null) {
+    if(confirm('¿Estás seguro de que deseas eliminar este doctor?')) {
+      doctorsList = doctorsList.filter(d => d.id !== ctxTargetId);
+      if (typeof SaludYaDB !== 'undefined') {
+        SaludYaDB.saveDoctors(doctorsList);
+      }
+      renderDoctors();
+      showToast('Doctor eliminado');
+    }
+  } else if (action === 'editar' && ctxTargetId !== null) {
+    const doc = doctorsList.find(d => d.id === ctxTargetId);
+    if(doc) openEditModal(doc);
+  }
+  ctxTargetId = null;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+document.addEventListener('click', () => {
+  document.getElementById('ctxMenu').classList.remove('show');
+});
+
+// Back button
+document.querySelector('.back-btn').addEventListener('click', function(){
+  window.location.href = 'panel_control.html';
+});
+
+// Close modal on click outside
+document.getElementById('addDoctorModal').addEventListener('click', function(e) {
+  if (e.target === this) closeAddModal();
+});
+document.getElementById('editDoctorModal').addEventListener('click', function(e) {
+  if (e.target === this) closeEditModal();
+});
+
+loadDoctors();
+</body>
+</html>
